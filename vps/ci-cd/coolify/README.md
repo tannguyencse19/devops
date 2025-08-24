@@ -1,208 +1,234 @@
-# Coolify Self-Hosting Installation
+# Coolify Self-Hosting Installation - Docker Compose
 
-This directory contains an automated installation script for self-hosting Coolify on localhost, an open-source alternative to Heroku, Netlify, and Vercel.
+This directory contains a simplified automated installation script for self-hosting Coolify using Docker Compose. This approach provides better control and transparency compared to the official curl-based installer.
 
-## Quick Start
-
-```bash
-# Run the installation script
-sudo ./INSTALL.sh
-# You will be prompted to enter your admin email address
-```
-
-## Prerequisites
-
-### System Requirements
-- **OS**: Ubuntu 22.04 LTS or 24.04 LTS (64-bit)
-- **RAM**: Minimum 4GB (8GB+ recommended)
-- **Disk**: Minimum 20GB available space
-- **Network**: Internet connection for downloading packages
-
-### Before Running the Script
-1. **Root Access**: The script must be run with sudo or as root user
-2. **Internet Connection**: Required for downloading Docker and Coolify components
-
-## What the Script Does
-
-### Phase 1: System Validation & Setup
-- ✅ Validates system requirements (RAM, disk, OS)
-- ✅ Updates system packages
-- ✅ Installs required dependencies
-- ✅ Configures firewall (UFW)
-- ✅ Installs Docker
-
-### Phase 2: Security Hardening
-- 🔒 Configures SSH security (key-based auth only)
-- 🔒 Sets up fail2ban for intrusion detection
-- 🔒 Generates secure passwords and secrets
-- 🔒 Hardens system settings
-
-### Phase 3: Coolify Installation
-- 🚀 Downloads and installs Coolify
-- 🚀 Configures environment variables
-- 🚀 Sets up localhost access on port 8000
-- 🚀 Creates admin user account
-
-### Phase 4: Monitoring & Maintenance
-- 📊 Sets up system monitoring (every 5 minutes)
-- 💾 Configures daily automated backups
-- 🛠️ Creates maintenance scripts
-- 📋 Generates detailed installation report
-
-## Usage
-
-Simply run the script as root:
+## 🚀 Quick Start
 
 ```bash
+# Simple localhost installation
 sudo ./INSTALL.sh
+
+# The script will prompt for admin email interactively
 ```
 
-The script will prompt you for:
-- Admin email address (validated for proper format)
+## 📋 What's Included
 
-No command-line arguments needed!
+- **INSTALL.sh** - Automated installation script
+- **docker-compose.yml** - Coolify stack definition
+- **.env.example** - Environment configuration template
 
-## Post-Installation
+## 🔧 Features
 
-After successful installation, you'll receive:
+### **System Management**
+- Prerequisites validation (RAM, disk, OS)
+- Docker installation and configuration
+- Firewall setup (UFW) with proper port management
+- Repository issue fixes (Hashicorp, nginx.lis, etc.)
 
-1. **Installation Report** (`/root/coolify-installation-report.txt`)
-   - Access credentials
-   - Important file locations
-   - Maintenance commands
+### **Docker Compose Setup**
+- Custom docker-compose configuration
+- PostgreSQL database with persistent storage
+- Redis for caching and sessions
+- Soketi for real-time features
+- Automatic secret generation
 
-2. **Access Information**
-   - Dashboard URL: `http://localhost:8000`
-   - Admin username: `admin`
-   - Generated secure password
+### **Security & Maintenance**
+- fail2ban intrusion detection
+- Automated daily backups
+- Secure password generation
+- Proper file permissions
 
-3. **Maintenance Tools**
-   - Monitor script: `/usr/local/bin/coolify-monitor.sh`
-   - Backup script: `/usr/local/bin/coolify-backup.sh`
-   - Maintenance menu: `/usr/local/bin/coolify-maintain.sh`
+## 🏗️ Architecture
 
-## File Structure After Installation
+The installation creates the following services:
+
+```yaml
+services:
+  coolify:        # Main application (port 8000)
+  postgres:       # Database
+  redis:          # Cache & sessions  
+  soketi:         # Real-time features (port 6001)
+  proxy:          # Traefik proxy (optional)
+```
+
+## 📁 Directory Structure
+
+After installation:
 
 ```
 /data/coolify/
-├── source/              # Coolify source files
-├── ssh/                 # SSH keys and configs
-├── applications/        # Deployed applications
-├── databases/           # Database data
-├── backups/             # Automated backups
-├── services/            # Service configurations
-├── proxy/               # Proxy configurations
-└── webhooks-during-maintenance/
-
-/var/log/
-├── coolify-install.log  # Installation logs
-└── coolify-monitor.log  # Monitoring logs
-
-/usr/local/bin/
-├── coolify-monitor.sh   # Monitoring script
-├── coolify-backup.sh    # Backup script
-└── coolify-maintain.sh  # Maintenance menu
+├── source/                 # Docker compose files
+│   ├── docker-compose.yml
+│   └── .env
+├── applications/           # Deployed apps
+├── databases/              # Database data
+├── backups/                # Daily backups
+├── proxy/                  # Proxy config
+└── ssh/                    # SSH keys
 ```
 
-## Common Operations
+## 🔍 System Requirements
 
-### Update Coolify
+- **OS**: Ubuntu 22.04+ or similar Linux distribution
+- **RAM**: 4GB minimum (8GB+ recommended)
+- **Disk**: 20GB+ available space
+- **Ports**: 22, 80, 443, 8000 (automatically configured)
+
+## 🛠️ Manual Configuration
+
+If you need to customize the installation:
+
+### Environment Variables
+
+Edit `/data/coolify/source/.env`:
+
 ```bash
-curl -fsSL https://cdn.coollabs.io/coolify/install.sh | bash
+nano /data/coolify/source/.env
 ```
 
-### View Logs
-```bash
-# Coolify application logs
-docker logs coolify
+### Docker Compose
 
-# Installation logs
-cat /var/log/coolify-install.log
+Modify the services in `/data/coolify/source/docker-compose.yml`
 
-# Monitoring logs
-cat /var/log/coolify-monitor.log
-```
+### Restart Services
 
-### Restart Coolify
 ```bash
 cd /data/coolify/source
 docker compose restart
 ```
 
-### Manual Backup
+## 📊 Post-Installation
+
+After successful installation:
+
+### Access Information
+- **Dashboard**: http://localhost:8000
+- **Admin Email**: As entered during installation
+- **Admin Password**: Auto-generated (saved in report)
+
+### Important Files
+- **Installation Report**: `/root/coolify-installation-report.txt`
+- **Configuration**: `/data/coolify/source/.env`
+- **Logs**: `docker logs coolify`
+
+### Maintenance Commands
+
 ```bash
+# View logs
+docker logs coolify
+
+# Restart services
+cd /data/coolify/source && docker compose restart
+
+# Update Coolify (re-run installer)
+sudo ./INSTALL.sh
+
+# Manual backup
 /usr/local/bin/coolify-backup.sh
+
+# Check status
+docker ps | grep coolify
 ```
 
-### Maintenance Menu
+## 🔧 Troubleshooting
+
+### Common Issues
+
+**Services won't start:**
 ```bash
-/usr/local/bin/coolify-maintain.sh
+# Check logs
+docker compose logs
+
+# Check system resources
+docker system df
+free -h
 ```
 
-## Security Features
+**Database connection issues:**
+```bash
+# Check database
+docker exec coolify-db psql -U coolify -d coolify -c "\\l"
 
-- 🔐 **SSH Hardening**: Key-based authentication only
-- 🛡️ **Firewall**: UFW configured for essential ports only
-- 🚨 **Intrusion Detection**: fail2ban monitoring
-- 🔑 **Strong Passwords**: Auto-generated secure credentials
-- 🔒 **SSL/TLS**: Automatic Let's Encrypt certificates
+# Reset database
+docker compose down
+docker volume rm coolify_postgres_data
+docker compose up -d
+```
 
-## Monitoring & Backup
+**Permission issues:**
+```bash
+# Fix permissions
+sudo chown -R 9999:root /data/coolify
+sudo chmod -R 700 /data/coolify
+```
 
-### Automated Monitoring
-- Runs every 5 minutes via systemd timer
-- Checks Docker service health
-- Monitors disk and memory usage
-- Auto-cleanup when disk usage >80%
+### Port Conflicts
 
-### Automated Backups
-- Daily backups at 2:00 AM
-- Includes all Coolify data and databases
-- Retention: 7 days
-- Location: `/data/coolify/backups/`
+If port 8000 is in use:
 
-## Troubleshooting
+1. Stop conflicting service
+2. Or modify `docker-compose.yml` ports section
+3. Restart: `docker compose up -d`
 
-### Installation Issues
+### Backup & Recovery
 
-1. **Port conflicts**
-   ```bash
-   # Check what's using ports 80/443/8000
-   netstat -tulpn | grep -E ':80|:443|:8000'
-   ```
+**Manual Backup:**
+```bash
+# Create backup
+/usr/local/bin/coolify-backup.sh
 
-3. **Docker issues**
-   ```bash
-   # Check Docker status
-   systemctl status docker
-   docker --version
-   ```
+# List backups
+ls -la /data/coolify/backups/
+```
 
-### Access Issues
+**Recovery:**
+```bash
+# Stop services
+docker compose down
 
-1. **Can't access dashboard**
-   - Verify firewall allows ports 80/443/8000
-   - Check if Coolify containers are running
-   - Try accessing `http://localhost:8000` directly
+# Restore data (example)
+tar -xzf /data/coolify/backups/coolify_backup_YYYYMMDD_HHMMSS.tar.gz -C /
 
-2. **Forgot admin password**
-   - Check installation report: `/root/coolify-installation-report.txt`
-   - Reset via Coolify interface or database
+# Start services
+docker compose up -d
+```
 
-### Log Locations
+## 🆚 Advantages over Official Installer
 
-- Installation: `/var/log/coolify-install.log`
-- Monitoring: `/var/log/coolify-monitor.log`
-- Coolify App: `docker logs coolify`
-- System: `/var/log/syslog`
+### **Transparency**
+- Clear docker-compose configuration
+- Visible environment variables
+- No hidden installation steps
 
-## Support & Documentation
+### **Control**
+- Easy to modify services
+- Predictable file locations
+- Standard Docker workflows
 
-- 📖 **Official Docs**: https://coolify.io/docs
-- 💬 **Discord**: https://discord.gg/xhBcc7YnpU
-- 🐛 **GitHub Issues**: https://github.com/coollabsio/coolify/issues
-- 🌟 **GitHub Repo**: https://github.com/coollabsio/coolify
+### **Maintenance**
+- Simple updates via docker compose
+- Easy backup/restore
+- Clear troubleshooting paths
 
-## License
+### **Development**
+- Easy to customize for development
+- Clear service dependencies
+- Standard containerized approach
 
-This installation script is provided as-is for educational and deployment purposes. Coolify itself is licensed under the Apache License 2.0.
+## 📚 Additional Resources
+
+- **Coolify Docs**: https://coolify.io/docs
+- **Docker Compose Reference**: https://docs.docker.com/compose/
+- **GitHub Issues**: https://github.com/coollabsio/coolify/issues
+
+## 🔒 Security Notes
+
+- Admin password is auto-generated and secure
+- fail2ban monitors for intrusion attempts  
+- Firewall configured for essential ports only
+- Regular security updates via package management
+- Database and Redis are password-protected
+
+## 📝 License
+
+This installation script is provided as-is. Coolify itself is licensed under Apache License 2.0.

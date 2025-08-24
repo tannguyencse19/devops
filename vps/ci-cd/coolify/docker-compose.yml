@@ -1,0 +1,136 @@
+# Coolify Self-Hosting Docker Compose Configuration
+# This compose file is based on the official Coolify production configuration
+# It will be downloaded and customized during installation
+
+version: '3.8'
+
+networks:
+  coolify:
+    external: false
+
+services:
+  coolify:
+    image: "ghcr.io/coollabsio/coolify:4"
+    container_name: coolify
+    restart: unless-stopped
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "/data/coolify:/data/coolify"
+      - "/tmp:/tmp"
+    environment:
+      - APP_ENV=production
+      - APP_DEBUG=false
+      - APP_NAME=Coolify
+      - APP_ID=${APP_ID:-}
+      - APP_KEY=${APP_KEY:-}
+      - APP_URL=${APP_URL:-http://localhost:8000}
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_DATABASE=coolify
+      - DB_USERNAME=coolify
+      - DB_PASSWORD=${DB_PASSWORD:-}
+      - REDIS_HOST=redis
+      - REDIS_PASSWORD=${REDIS_PASSWORD:-}
+      - PUSHER_HOST=${PUSHER_HOST:-soketi}
+      - PUSHER_PORT=${PUSHER_PORT:-6001}
+      - PUSHER_APP_ID=${PUSHER_APP_ID:-}
+      - PUSHER_APP_KEY=${PUSHER_APP_KEY:-}
+      - PUSHER_APP_SECRET=${PUSHER_APP_SECRET:-}
+    ports:
+      - "8000:80"
+    depends_on:
+      - postgres
+      - redis
+      - soketi
+    networks:
+      - coolify
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/api/health"]
+      interval: 5s
+      timeout: 20s
+      retries: 10
+
+  postgres:
+    image: "postgres:15-alpine"
+    container_name: coolify-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: coolify
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-}
+      POSTGRES_DB: coolify
+    volumes:
+      - coolify_postgres_data:/var/lib/postgresql/data
+    networks:
+      - coolify
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U coolify -d coolify"]
+      interval: 5s
+      timeout: 20s
+      retries: 10
+
+  redis:
+    image: "redis:7-alpine"
+    container_name: coolify-redis
+    restart: unless-stopped
+    command: >
+      --requirepass ${REDIS_PASSWORD:-}
+    volumes:
+      - coolify_redis_data:/data
+    networks:
+      - coolify
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 20s
+      retries: 10
+
+  soketi:
+    image: "quay.io/soketi/soketi:latest-16-alpine"
+    container_name: coolify-realtime
+    restart: unless-stopped
+    environment:
+      SOKETI_DEBUG: ${SOKETI_DEBUG:-false}
+      SOKETI_DEFAULT_APP_ID: ${PUSHER_APP_ID:-}
+      SOKETI_DEFAULT_APP_KEY: ${PUSHER_APP_KEY:-}
+      SOKETI_DEFAULT_APP_SECRET: ${PUSHER_APP_SECRET:-}
+    ports:
+      - "6001:6001"
+    networks:
+      - coolify
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:6001/"]
+      interval: 5s
+      timeout: 20s
+      retries: 10
+
+  # Optional: Add a proxy (Traefik) for production use
+  proxy:
+    image: "traefik:v2.10"
+    container_name: coolify-proxy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "/data/coolify/proxy:/data"
+    command:
+      - "--api.dashboard=false"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--certificatesresolvers.letsencrypt.acme.httpchallenge=true"
+      - "--certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web"
+      - "--certificatesresolvers.letsencrypt.acme.email=${ACME_EMAIL:-admin@localhost}"
+      - "--certificatesresolvers.letsencrypt.acme.storage=/data/acme.json"
+    networks:
+      - coolify
+    profiles:
+      - proxy  # Enable with --profile proxy
+
+volumes:
+  coolify_postgres_data:
+    driver: local
+  coolify_redis_data:
+    driver: local

@@ -115,6 +115,54 @@ else
     systemctl enable docker
 fi
 
+# Function to install Coolify using docker-compose
+install_coolify_docker_compose() {
+    # Create Coolify directories
+    log "Creating Coolify directories..."
+    mkdir -p /data/coolify/{source,ssh,applications,databases,backups,services,proxy,webhooks-during-maintenance}
+    mkdir -p /data/coolify/ssh/{keys,mux}
+    mkdir -p /data/coolify/proxy/dynamic
+
+    # Copy docker-compose files
+    log "Setting up Coolify configuration..."
+    cp "$SCRIPT_DIR/docker-compose.yml" /data/coolify/source/
+    cp "$SCRIPT_DIR/.env.example" /data/coolify/source/.env
+
+    # Generate and update environment variables
+    log "Configuring environment variables..."
+    sed -i "s|APP_ID=|APP_ID=$(openssl rand -hex 16)|g" /data/coolify/source/.env
+    sed -i "s|APP_KEY=|APP_KEY=base64:$(openssl rand -base64 32)|g" /data/coolify/source/.env
+    sed -i "s|DB_PASSWORD=|DB_PASSWORD=$ADMIN_PASSWORD|g" /data/coolify/source/.env
+    sed -i "s|REDIS_PASSWORD=|REDIS_PASSWORD=$(openssl rand -base64 32)|g" /data/coolify/source/.env
+    sed -i "s|PUSHER_APP_ID=|PUSHER_APP_ID=$(openssl rand -hex 32)|g" /data/coolify/source/.env
+    sed -i "s|PUSHER_APP_KEY=|PUSHER_APP_KEY=$(openssl rand -hex 32)|g" /data/coolify/source/.env
+    sed -i "s|PUSHER_APP_SECRET=|PUSHER_APP_SECRET=$(openssl rand -hex 32)|g" /data/coolify/source/.env
+    sed -i "s|ROOT_USER_EMAIL=|ROOT_USER_EMAIL=$ADMIN_EMAIL|g" /data/coolify/source/.env
+    sed -i "s|ROOT_USER_PASSWORD=|ROOT_USER_PASSWORD=$ADMIN_PASSWORD|g" /data/coolify/source/.env
+    
+    # Set proper permissions
+    chown -R 9999:root /data/coolify
+    chmod -R 700 /data/coolify
+
+    # Start Coolify
+    log "Starting Coolify services..."
+    cd /data/coolify/source
+    docker compose up -d --pull always
+
+    # Wait for services to initialize
+    log "Waiting for services to initialize..."
+    sleep 45
+    
+    # Create initial admin user if containers started successfully
+    if docker ps | grep -q coolify; then
+        log "Creating admin user..."
+        sleep 10  # Wait a bit more for Laravel to be ready
+        docker exec coolify php artisan make:user --email="$ADMIN_EMAIL" --password="$ADMIN_PASSWORD" || {
+            log "Could not create user automatically, will be done through web interface"
+        }
+    fi
+}
+
 # Generate secure admin password
 log "Generating secure credentials..."
 ADMIN_PASSWORD=$(openssl rand -base64 32 | tr -d "=+/" | cut -c1-16)
@@ -129,18 +177,12 @@ if docker ps -a --format "table {{.Names}}" 2>/dev/null | grep -q coolify; then
         cd /data/coolify/source 2>/dev/null && docker compose start || {
             log "Coolify containers exist but can't start, reinstalling..."
             docker rm -f $(docker ps -aq --filter "name=coolify") 2>/dev/null || true
-            env ROOT_USERNAME=admin \
-                ROOT_USER_EMAIL="$ADMIN_EMAIL" \
-                ROOT_USER_PASSWORD="$ADMIN_PASSWORD" \
-                bash -c 'curl -fsSL https://cdn.coollabs.io/coolify/install.sh | bash'
+            install_coolify_docker_compose
         }
     fi
 else
-    log "Installing Coolify..."
-    env ROOT_USERNAME=admin \
-        ROOT_USER_EMAIL="$ADMIN_EMAIL" \
-        ROOT_USER_PASSWORD="$ADMIN_PASSWORD" \
-        bash -c 'curl -fsSL https://cdn.coollabs.io/coolify/install.sh | bash'
+    log "Installing Coolify using docker-compose..."
+    install_coolify_docker_compose
 fi
 
 # Wait for startup
