@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "gpt-agent": {
+      "type": "stdio",
+      "command": "codex",
+      "args": [
+        "mcp"
+      ],
+      "env": {}
+    }
+  }
+}
