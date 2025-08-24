@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-ROOT="/root/devops/cloudflare"
+ROOT="/root/.cloudflared"
 CONFIG_YML="${ROOT}/config.yml"
 
 if [ ! -f "$CONFIG_YML" ]; then
