@@ -133,45 +133,35 @@ else
     systemctl enable docker
 fi
 
-# Function to install Coolify using docker-compose
-install_coolify_docker_compose() {
-    # Create Coolify directories
-    log "Creating Coolify directories..."
-    mkdir -p /data/coolify/{source,ssh,applications,databases,backups,services,proxy,webhooks-during-maintenance}
-    mkdir -p /data/coolify/ssh/{keys,mux}
-    mkdir -p /data/coolify/proxy/dynamic
-
-    # Download official Coolify configuration files
-    log "Downloading official Coolify configuration..."
-    curl -fsSL https://cdn.coollabs.io/coolify/docker-compose.yml -o /data/coolify/source/docker-compose.yml
-    curl -fsSL https://cdn.coollabs.io/coolify/docker-compose.prod.yml -o /data/coolify/source/docker-compose.prod.yml
-    curl -fsSL https://cdn.coollabs.io/coolify/.env.production -o /data/coolify/source/.env
-    curl -fsSL https://cdn.coollabs.io/coolify/upgrade.sh -o /data/coolify/source/upgrade.sh
-
-    # Use your custom .env configuration
-    log "Using your custom .env configuration..."
-    cp "$SCRIPT_DIR/.env" /data/coolify/source/.env
+# Function to install Coolify using official installer
+install_coolify_official() {
+    log "Installing Coolify using official installer..."
     
-    # Set proper permissions
-    chown -R 9999:root /data/coolify
-    chmod -R 700 /data/coolify
-
-    # Start Coolify
-    log "Starting Coolify services..."
-    cd /data/coolify/source
-    docker compose --env-file .env -f docker-compose.yml -f docker-compose.prod.yml up -d --pull always --remove-orphans --force-recreate
-
-    # Wait for services to initialize
-    log "Waiting for services to initialize..."
-    sleep 45
+    # Use official installer with pre-configured environment variables
+    env ROOT_USERNAME=admin \
+        ROOT_USER_EMAIL="$ADMIN_EMAIL" \
+        ROOT_USER_PASSWORD="$ADMIN_PASSWORD" \
+        bash -c 'curl -fsSL https://cdn.coollabs.io/coolify/install.sh | bash'
     
-    # Create initial admin user if containers started successfully
+    # Wait for services to be ready
+    log "Waiting for Coolify to be fully ready..."
+    sleep 30
+    
+    # Ensure admin user exists (official installer should handle this, but double-check)
     if docker ps | grep -q coolify; then
-        log "Creating admin user..."
-        sleep 10  # Wait a bit more for Laravel to be ready
-        docker exec coolify php artisan make:user --email="$ADMIN_EMAIL" --password="$ADMIN_PASSWORD" || {
-            log "Could not create user automatically, will be done through web interface"
+        docker exec coolify php artisan tinker --execute="
+        if (App\Models\User::where('email', '$ADMIN_EMAIL')->count() == 0) {
+            App\Models\User::create([
+                'name' => 'admin',
+                'email' => '$ADMIN_EMAIL',
+                'password' => Hash::make('$ADMIN_PASSWORD'),
+                'email_verified_at' => now()
+            ]);
+            echo 'Admin user created successfully!';
+        } else {
+            echo 'Admin user already exists.';
         }
+        " 2>/dev/null || log "User creation will be handled by Coolify setup"
     fi
 }
 
@@ -189,12 +179,12 @@ if docker ps -a --format "table {{.Names}}" 2>/dev/null | grep -q coolify; then
         cd /data/coolify/source 2>/dev/null && docker compose start || {
             log "Coolify containers exist but can't start, reinstalling..."
             docker rm -f $(docker ps -aq --filter "name=coolify") 2>/dev/null || true
-            install_coolify_docker_compose
+            install_coolify_official
         }
     fi
 else
-    log "Installing Coolify using docker-compose..."
-    install_coolify_docker_compose
+    log "Installing Coolify using official installer..."
+    install_coolify_official
 fi
 
 # Wait for startup
