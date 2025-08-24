@@ -8,6 +8,9 @@
 
 set -euo pipefail
 
+# Script directory
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
 # Colors
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -34,15 +37,30 @@ warn() {
 # Check if running as root
 [[ $EUID -ne 0 ]] && error_exit "This script must be run as root. Use 'sudo $0'"
 
-# Prompt for admin email
+# Check if .env file exists and read admin email from it
 echo -e "${GREEN}Coolify Installation - Localhost Setup${NC}"
 echo "==========================================="
 echo
-read -p "Enter admin email address: " ADMIN_EMAIL
 
-# Validate email format
-if [[ ! "$ADMIN_EMAIL" =~ ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$ ]]; then
-    error_exit "Invalid email format"
+if [[ -f "$SCRIPT_DIR/.env" ]]; then
+    log "Found existing .env file, reading configuration..."
+    ADMIN_EMAIL=$(grep "^ROOT_USER_EMAIL=" "$SCRIPT_DIR/.env" | cut -d'=' -f2 | tr -d '"')
+    
+    if [[ -z "$ADMIN_EMAIL" ]]; then
+        read -p "Admin email not found in .env file. Enter admin email address: " ADMIN_EMAIL
+        # Validate email format
+        if [[ ! "$ADMIN_EMAIL" =~ ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$ ]]; then
+            error_exit "Invalid email format"
+        fi
+    else
+        log "Using admin email from .env: $ADMIN_EMAIL"
+    fi
+else
+    read -p "Enter admin email address: " ADMIN_EMAIL
+    # Validate email format
+    if [[ ! "$ADMIN_EMAIL" =~ ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$ ]]; then
+        error_exit "Invalid email format"
+    fi
 fi
 
 log "Starting Coolify installation for localhost..."
@@ -123,22 +141,16 @@ install_coolify_docker_compose() {
     mkdir -p /data/coolify/ssh/{keys,mux}
     mkdir -p /data/coolify/proxy/dynamic
 
-    # Copy docker-compose files
-    log "Setting up Coolify configuration..."
-    cp "$SCRIPT_DIR/docker-compose.yml" /data/coolify/source/
-    cp "$SCRIPT_DIR/.env.example" /data/coolify/source/.env
+    # Download official Coolify configuration files
+    log "Downloading official Coolify configuration..."
+    curl -fsSL https://cdn.coollabs.io/coolify/docker-compose.yml -o /data/coolify/source/docker-compose.yml
+    curl -fsSL https://cdn.coollabs.io/coolify/docker-compose.prod.yml -o /data/coolify/source/docker-compose.prod.yml
+    curl -fsSL https://cdn.coollabs.io/coolify/.env.production -o /data/coolify/source/.env
+    curl -fsSL https://cdn.coollabs.io/coolify/upgrade.sh -o /data/coolify/source/upgrade.sh
 
-    # Generate and update environment variables
-    log "Configuring environment variables..."
-    sed -i "s|APP_ID=|APP_ID=$(openssl rand -hex 16)|g" /data/coolify/source/.env
-    sed -i "s|APP_KEY=|APP_KEY=base64:$(openssl rand -base64 32)|g" /data/coolify/source/.env
-    sed -i "s|DB_PASSWORD=|DB_PASSWORD=$ADMIN_PASSWORD|g" /data/coolify/source/.env
-    sed -i "s|REDIS_PASSWORD=|REDIS_PASSWORD=$(openssl rand -base64 32)|g" /data/coolify/source/.env
-    sed -i "s|PUSHER_APP_ID=|PUSHER_APP_ID=$(openssl rand -hex 32)|g" /data/coolify/source/.env
-    sed -i "s|PUSHER_APP_KEY=|PUSHER_APP_KEY=$(openssl rand -hex 32)|g" /data/coolify/source/.env
-    sed -i "s|PUSHER_APP_SECRET=|PUSHER_APP_SECRET=$(openssl rand -hex 32)|g" /data/coolify/source/.env
-    sed -i "s|ROOT_USER_EMAIL=|ROOT_USER_EMAIL=$ADMIN_EMAIL|g" /data/coolify/source/.env
-    sed -i "s|ROOT_USER_PASSWORD=|ROOT_USER_PASSWORD=$ADMIN_PASSWORD|g" /data/coolify/source/.env
+    # Use your custom .env configuration
+    log "Using your custom .env configuration..."
+    cp "$SCRIPT_DIR/.env" /data/coolify/source/.env
     
     # Set proper permissions
     chown -R 9999:root /data/coolify
@@ -147,7 +159,7 @@ install_coolify_docker_compose() {
     # Start Coolify
     log "Starting Coolify services..."
     cd /data/coolify/source
-    docker compose up -d --pull always
+    docker compose --env-file .env -f docker-compose.yml -f docker-compose.prod.yml up -d --pull always --remove-orphans --force-recreate
 
     # Wait for services to initialize
     log "Waiting for services to initialize..."
@@ -163,9 +175,9 @@ install_coolify_docker_compose() {
     fi
 }
 
-# Generate secure admin password
-log "Generating secure credentials..."
-ADMIN_PASSWORD=$(openssl rand -base64 32 | tr -d "=+/" | cut -c1-16)
+# Read admin password from .env file
+ADMIN_PASSWORD=$(grep "^ROOT_USER_PASSWORD=" "$SCRIPT_DIR/.env" | cut -d'=' -f2 | tr -d '"')
+log "Using admin password from .env file"
 
 # Install Coolify
 if docker ps -a --format "table {{.Names}}" 2>/dev/null | grep -q coolify; then

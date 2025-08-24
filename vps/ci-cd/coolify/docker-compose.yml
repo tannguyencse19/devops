@@ -2,15 +2,13 @@
 # This compose file is based on the official Coolify production configuration
 # It will be downloaded and customized during installation
 
-version: '3.8'
-
 networks:
   coolify:
     external: false
 
 services:
   coolify:
-    image: "ghcr.io/coollabsio/coolify:4"
+    image: "ghcr.io/coollabsio/coolify:4.0.0-beta.420.6"
     container_name: coolify
     restart: unless-stopped
     volumes:
