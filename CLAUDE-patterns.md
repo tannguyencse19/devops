@@ -42,7 +42,7 @@ esac
 ### Recovery-First Design
 - Every INSTALL action should have corresponding UNINSTALL action
 - Document what gets created/modified for complete cleanup
-- Test UNINSTALL í INSTALL cycle to ensure reliability
+- Test UNINSTALL ÔøΩ INSTALL cycle to ensure reliability
 - Prefer stateless installations that can be completely removed
 
 ## Implementation Priority
@@ -52,8 +52,36 @@ esac
 4. **Test the recovery cycle**
 5. **Iterate based on user review**
 
+## **COLOCATION PRINCIPLE** üèÜ
+
+**CRITICAL PATTERN**: Always follow the colocation principle
+
+### Definition
+Place related files as close as possible to where they're used:
+- Documentation next to the code it describes
+- Configuration files with the components they configure
+- Scripts near the functionality they support
+
+### Examples Applied
+‚úÖ **Correct**: `.github/COOLIFY_SETUP.md` near `.github/workflows/build-and-deploy.yml`
+‚ùå **Wrong**: `docs/COOLIFY_SETUP.md` far from GitHub Actions workflow
+
+### Benefits
+- Easier to find related files
+- Better maintainability
+- Clear relationships between components
+- Reduced cognitive load
+
+### Implementation Rules
+1. Documentation lives with the code it documents
+2. Config files stay with components they configure
+3. Helper scripts colocate with main functionality
+4. Tests alongside source code when possible
+
+**ALWAYS REMEMBER**: When creating or organizing files, ask "What is this most closely related to?" and place it there.
+
 ## Examples Applied
-- Coolify INSTALL.sh í should have UNINSTALL.sh counterpart
-- Docker setup í include Docker removal/cleanup
-- Database setup í include data/container cleanup
-- Configuration files í track and remove all created files
+- Coolify INSTALL.sh ÔøΩ should have UNINSTALL.sh counterpart
+- Docker setup ÔøΩ include Docker removal/cleanup
+- Database setup ÔøΩ include data/container cleanup
+- Configuration files ÔøΩ track and remove all created files
