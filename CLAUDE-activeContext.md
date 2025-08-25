@@ -5,7 +5,7 @@
 ###  Completed: Coolify API Connection Test
 - **Test Goal**: Verify programmatic control of Coolify instance
 - **API Endpoint**: `GET /api/v1/servers`
-- **Authentication**: Bearer token from `.env` file (`COOLIFY_CODING_AGENT_API_TOKEN`)
+- **Authentication**: Bearer token from `.env` file (`GITHUBB_TIMOTHYNGUYEN_COOLIFY_CODING_AGENT_API_TOKEN`)
 - **Base URL**: `http://localhost:8000`
 - **Test Result**: SUCCESS 
 

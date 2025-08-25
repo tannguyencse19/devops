@@ -85,3 +85,49 @@ Place related files as close as possible to where they're used:
 - Docker setup � include Docker removal/cleanup
 - Database setup � include data/container cleanup
 - Configuration files � track and remove all created files
+
+## GitHub Actions Pattern
+
+### GitHub Action Trigger Condition
+
+Trigger on push commit to `main` branch
+
+```yaml
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build_deploy:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+```
+
+### GitHub Action Environment Variable Naming
+**CRITICAL**: In GitHub Actions workflows, define environment variables to match secret names exactly
+- ✅ **Correct**: `GITHUBB_TIMOTHYNGUYEN_COOLIFY_URL: ${{ secrets.GITHUBB_TIMOTHYNGUYEN_COOLIFY_URL }}`
+- ❌ **Wrong**: `COOLIFY_URL: ${{ secrets.GITHUBB_TIMOTHYNGUYEN_COOLIFY_URL }}` (creates unnecessary alias)
+
+### GitHub Action Secret Naming Convention
+**ALL GitHub repository secrets MUST have prefix: `GITHUBB_TIMOTHYNGUYEN_`**
+- Format: `GITHUBB_TIMOTHYNGUYEN_[PURPOSE]`
+- Examples:
+  - `GITHUBB_TIMOTHYNGUYEN_COOLIFY_URL`
+  - `GITHUBB_TIMOTHYNGUYEN_DOCKER_REGISTRY_TOKEN`
+
+### GitHub Action Secret Actual Value
+
+The actual value can be found at `vps/ci-cd/coolify/.env` (or `vps/ci-cd/coolify/.env.example`)
+
+### GitHub Action Testing Process
+
+- Trigger GitHub Action workflow by create an empty commit to `main` branch
+- WAIT for the GitHub Action workflow to FINISH (NOT QUEUE).
+- Repeat the process until the GitHub Action workflow run success. Debug if the workflow run failed. 
+- STOP the testing process if detect that the workflow run failed not because of the GitHub Action related code (GitHub Action code, Dockerfile, docker-compose).
+- NEVER update the GitHub Action for print better error. Just debug on the original error GitHub Action throw.
+- NEVER DELETE ANY BRANCH during the testing process.
