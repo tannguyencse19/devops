@@ -140,7 +140,7 @@ jobs:
 
 **Testing Process**:
 - Trigger GitHub Action workflow by creating an empty commit to `main` branch
-- WAIT for the GitHub Action workflow to FINISH (NOT QUEUE)
+- WAIT for the GitHub Action workflow to FINISH (NOT QUEUE). You can use `sleep 60` command instead of immediately checking.
 - Repeat the process until the GitHub Action workflow runs successfully. Debug if the workflow run failed
 - STOP the testing process if detected that the workflow run failed not because of the GitHub Action related code (GitHub Action code, Dockerfile, docker-compose)
 - NEVER update the GitHub Action for better error printing. Just debug on the original error GitHub Action throws
