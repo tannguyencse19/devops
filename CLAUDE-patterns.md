@@ -123,6 +123,36 @@ jobs:
 
 The actual value can be found at `vps/ci-cd/coolify/.env` (or `vps/ci-cd/coolify/.env.example`)
 
+## Coolify Access Pattern
+
+### Coolify API Access
+**CRITICAL**: Always access Coolify using the Bearer token from the `.env` file
+
+**Standard API call pattern**:
+```bash
+curl -s -H "Authorization: Bearer 4|CsDjmJL0MGWOMyNb9eNUDOtH3VMhdfCEfiL6q7M7b5337df0" \
+     -H "Accept: application/json" \
+     "https://coolify.timothynguyen.work/api/v1/[endpoint]"
+```
+
+**Available endpoints for investigation**:
+- `/api/v1/applications` - List all applications
+- `/api/v1/projects` - List all projects  
+- `/api/v1/servers` - List all servers
+- `/api/v1/services` - List all services
+- `/api/v1/deployments` - List deployment history
+- `/api/v1/resources` - List all resources
+
+**Authentication details**:
+- Base URL: `https://coolify.timothynguyen.work`
+- API Token: `4|CsDjmJL0MGWOMyNb9eNUDOtH3VMhdfCEfiL6q7M7b5337df0`
+- Admin credentials: `admin` / `j9WsQMk8CBoIt6O`
+
+**Usage notes**:
+- Always use Bearer token authentication for API calls
+- Check multiple endpoints to understand the current state
+- Applications must be created in Coolify before deployment will work
+
 ### GitHub Action Testing Process
 
 - Trigger GitHub Action workflow by create an empty commit to `main` branch
