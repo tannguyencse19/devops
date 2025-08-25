@@ -37,7 +37,7 @@ After installation:
 
 **Standard API call pattern**:
 ```bash
-curl -s -H "Authorization: Bearer 4|CsDjmJL0MGWOMyNb9eNUDOtH3VMhdfCEfiL6q7M7b5337df0" \
+curl -s -H "Authorization: Bearer <GITHUBB_TIMOTHYNGUYEN_COOLIFY_GITHUB_ACTION_API_TOKEN>" \
      -H "Accept: application/json" \
      "https://coolify.timothynguyen.work/api/v1/[endpoint]"
 ```
@@ -52,11 +52,10 @@ curl -s -H "Authorization: Bearer 4|CsDjmJL0MGWOMyNb9eNUDOtH3VMhdfCEfiL6q7M7b533
 
 **Authentication details**:
 - Base URL: `https://coolify.timothynguyen.work`
-- API Token: `4|CsDjmJL0MGWOMyNb9eNUDOtH3VMhdfCEfiL6q7M7b5337df0`
-- Admin credentials: `admin` / `j9WsQMk8CBoIt6O`
+- API Token: `<COOLIFY_API_TOKEN>` (get actual value from `/vps/ci-cd/coolify/.env`)
+- Admin credentials: `<ADMIN_USERNAME>` / `<ADMIN_PASSWORD>` (get actual values from `/vps/ci-cd/coolify/.env`)
 
 **Usage notes**:
-- Always use Bearer token authentication for API calls
 - Check multiple endpoints to understand the current state
 - Applications must be created in Coolify before deployment will work
 
@@ -72,53 +71,68 @@ curl -s -H "Authorization: Bearer 4|CsDjmJL0MGWOMyNb9eNUDOtH3VMhdfCEfiL6q7M7b533
 - ✅ **Correct**: `GITHUBB_TIMOTHYNGUYEN_COOLIFY_URL: ${{ secrets.GITHUBB_TIMOTHYNGUYEN_COOLIFY_URL }}`
 - ❌ **Wrong**: `COOLIFY_URL: ${{ secrets.GITHUBB_TIMOTHYNGUYEN_COOLIFY_URL }}` (creates unnecessary alias)
 
-**Secret values can be found in**: `vps/ci-cd/coolify/.env`
+**Secret values can be found in**: `/vps/ci-cd/coolify/.env`
 
 ## Coolify Resource Selection for CI/CD
 
-### Docker Image Application (Recommended)
+### Private Repository with Deploy Key (Recommended)
 
-**CRITICAL**: For GitHub Actions CI/CD pipelines, always use **Docker Image Application** resource type
+**CRITICAL**: For GitHub Actions CI/CD pipelines, use **Private Repository with Deploy Key** resource type
 
-**API Endpoint**: `POST /applications/dockerimage`
+**API Endpoint**: `POST /applications/private-deploy-key`
 
-**Why Docker Image Application gives maximum programmatic control**:
+**Why Private Repository with Deploy Key provides maximum control and decoupling**:
 - ✅ **Full API Creation**: Can be created entirely via single API call with no manual dashboard setup
-- ✅ **Pre-built Image Support**: Works with existing container registry images (ghcr.io, docker.io, etc.)
+- ✅ **Source Control Integration**: Direct integration with private GitHub repositories
+- ✅ **Flexible Build Control**: Coolify handles build process using specified build pack (Nixpacks, Dockerfile, Docker Compose)
+- ✅ **Easy Decoupling**: Simple SSH key revocation to completely disconnect from Coolify
 - ✅ **Comprehensive Configuration**: All deployment parameters configurable via API:
   - Port mappings and exposure
-  - Custom domain configuration  
+  - Custom domain configuration
   - Environment variables
   - Resource limits (CPU/memory)
   - Health check settings
+  - Build commands (install, build, start)
+  - Pre/post deployment commands
   - Custom labels and Docker run options
-- ✅ **Webhook Integration**: Provides webhook endpoint for automated deployments once created
-- ✅ **No Redundant Build**: Skips build process since image is pre-built in CI/CD pipeline
+- ✅ **Webhook Integration**: Automatic deployment triggers via GitHub webhooks
+- ✅ **Build Pack Flexibility**: Supports Nixpacks, Dockerfile, Docker Compose, or Static builds
+- ✅ **No Registry Dependencies**: Eliminates need for external Docker registry authentication
+
+**SSH Key Management**:
+- Generate deploy key: `ssh-keygen -t rsa -b 4096 -C "coolify-deploy-key"`
+- Add public key to GitHub repository (Settings > Deploy keys)
+- Store private key UUID in Coolify for API calls
+- Revoke by removing from GitHub repository (instant decoupling)
 
 ### Alternative Resource Types (When NOT to use)
+
+**Docker Image Application** (`POST /applications/dockerimage`):
+- Requires Docker registry authentication and maintenance
+- Additional complexity for registry credential management
+- Less flexible than source-based deployments
+
+**GitHub App Integration** (`POST /applications/private-github-app`):
+- Heavy integration that's complex to decouple
+- Requires GitHub App creation and management
+- Not suitable when delegation is primary requirement
 
 **Docker Compose Application** (`POST /applications/dockercompose`):
 - Use only for multi-container applications with complex service dependencies
 - Requires docker-compose.yml management
 
-**Dockerfile Application** (`POST /applications/dockerfile`):
-- Avoid when already building images in CI/CD
-- Creates redundant build process
-- Requires more manual webhook setup
-
-**Git-based Applications**:
-- Least API control
-- Requires manual dashboard configuration
-- Not suitable for automated provisioning
-
 ### Implementation Pattern for GitHub Actions
 
-1. **Build image in GitHub Actions** (existing pattern)
-2. **Create Docker Image Application via API** (programmatic)
-3. **Use webhook endpoint for deployments** (automated)
-4. **No manual Coolify dashboard interaction required**
+1. **Generate SSH Deploy Key** (one-time setup)
+2. **Create Private Repository Application via API** (programmatic)
+3. **Configure automatic webhooks** (source-triggered deployments)
+4. **GitHub Actions only handles CI/testing** (build handled by Coolify)
 
-**Root Cause Pattern**: 404 deployment errors typically indicate missing application resource in Coolify, not incorrect API endpoints.
+**Key Advantages**:
+- **Clean Delegation**: Others can deploy without GitHub access using API
+- **Maximum Decoupling**: SSH key revocation instantly disconnects Coolify
+- **Build Flexibility**: Coolify handles complex build scenarios automatically
+- **No Registry Maintenance**: Eliminates Docker registry authentication issues
 
 ## GitHub Actions Integration Example
 

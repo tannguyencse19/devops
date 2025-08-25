@@ -20,6 +20,22 @@
 
 Always read the memory bank files before doing any task: 
 
-*   **CLAUDE-activeContext.md** - Current session state, goals, and progress (if exists)
+*   **CLAUDE-activeContext.md** - Current session state, goals, and progress (if exists)
     
-*   **CLAUDE-patterns.md** - Established code patterns and conventions (if exists)
+*   **CLAUDE-patterns.md** - Established code patterns and conventions (if exists)
+
+## Security Guidelines for Documentation
+
+**CRITICAL**: NEVER WRITE DOWN SECRET VALUE INTO MARKDOWN FILE. ONLY WRITE DOWN:
+a) **SECRET KEY NAME** (e.g., `COOLIFY_API_TOKEN`, `ADMIN_PASSWORD`)
+b) **HOW TO GET THE ACTUAL SECRET VALUE** (in this case is `/vps/ci-cd/coolify/.env`)
+
+### Secret Handling Rules
+
+- **Keys-Only Policy**: Always document secret names and retrieval location/process; never values, partial values, or screenshots
+- **Safe Placeholders**: Use `<SECRET_KEY_NAME>` style placeholders in examples; never realistic-looking dummy values
+- **Source of Truth**: Reference `/vps/ci-cd/coolify/.env` for actual values; do not duplicate values elsewhere
+- **No Inline Secrets**: Prohibit secrets in code blocks, URLs, logs, outputs, or screenshots included in docs
+- **CI/CD Handling**: Only refer to CI secret names and where to fetch values (the `.env` file); never paste values into YAML
+- **Git Rules**: `.env` files must be ignored and never committed; do not paste `.env` contents into issues/PRs
+- **Accidental Exposure**: If exposure occurs, rotate immediately, scrub the artifact, and update `.env` and CI stores
