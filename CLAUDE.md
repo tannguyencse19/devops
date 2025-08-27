@@ -8,10 +8,16 @@ Always read the memory bank files before doing any task:
 - **CLAUDE-activePlan.md** - Current working plan, how many parts, which part has done
 - **CLAUDE-activeContext.md** - Current working part of the plan, current progress, goals
 
+### Simplicity First
+- When planning, aim for the simplest viable slice, not a full-fledged feature. Define a minimal, testable scope to ship quickly and iterate.
+- NEVER plan alternative approach.
+- **Do simple things instead of complicated design** - user will review work anyway
+- Avoid over-engineering or premature optimization
+
 ## Planning Phase
 
 - ALWAYS use `gpt-agent` MCP Server for planning. ALWAYS use model `gpt-5` when using `gpt-agent` MCP Server.
-- Once planning finish, show the full detail plan and wait for review, NO CODE YET.
+- Once planning finish, show the full detail plan and WAIT FOR REVIEW, NEVER DO ANYTHING NEXT.
 
 ## Third Party Documentation
 
@@ -39,4 +45,4 @@ b) **HOW TO GET THE ACTUAL SECRET VALUE** (in this case is `/vps/ci-cd/coolify/.
 
 # Miscellaneous
 
-- NEVER use special characters, emoji because it make you likely failed to edit file
+- NEVER use special characters, emoji when are responding.
