@@ -159,3 +159,7 @@ jobs:
 - STOP the testing process if detected that the workflow run failed not because of the GitHub Action related code (GitHub Action code, Dockerfile, docker-compose)
 - NEVER update the GitHub Action for better error printing. Just debug on the original error GitHub Action throws
 - NEVER DELETE ANY BRANCH during the testing process
+
+# Limitation
+
+- Currently can't push to GitHub packages even use Deploy Keys or GitHub Apps
