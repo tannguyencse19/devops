@@ -65,7 +65,7 @@ This section documents how to connect a GitHub repository to Coolify using the *
 
 #### 1. Install Coolify GitHub App
 
-**NOTES**: When you need to do this section, instead of you doing, instruct the user how to do it.
+**NOTES**: When you need to do this section, instead of you doing, instruct the user how to do it AND WAIT FOR THEM TO FINISH.
 
 **In Coolify Dashboard:**
 1. Navigate to **Sources** section
@@ -86,7 +86,7 @@ This section documents how to connect a GitHub repository to Coolify using the *
 
 #### 2. Create Application from Connected Repository
 
-**NOTES**: When you need to do this section, instead of you doing, instruct the user how to do it.
+**NOTES**: When you need to do this section, instead of you doing, instruct the user how to do it AND WAIT FOR THEM TO FINISH.
 
 **Application Creation:**
 1. Navigate to **Applications** → **+ New Application**
