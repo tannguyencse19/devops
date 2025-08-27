@@ -1,10 +1,5 @@
 # CLAUDE.md
 
-## Planning Phase
-
-- ALWAYS use `gpt-agent` MCP Server for planning. ALWAYS use model `gpt-5` when using `gpt-agent` MCP Server.
-- Once planning finish, show the full detail plan and wait for review, NO CODE YET.
-
 ## Memory Bank System
 
 Always read the memory bank files before doing any task: 
@@ -12,6 +7,11 @@ Always read the memory bank files before doing any task:
 - **CLAUDE-patterns.md** - Established code patterns and conventions
 - **CLAUDE-activePlan.md** - Current working plan, how many parts, which part has done
 - **CLAUDE-activeContext.md** - Current working part of the plan, current progress, goals
+
+## Planning Phase
+
+- ALWAYS use `gpt-agent` MCP Server for planning. ALWAYS use model `gpt-5` when using `gpt-agent` MCP Server.
+- Once planning finish, show the full detail plan and wait for review, NO CODE YET.
 
 ## Security Guidelines for Documentation
 
@@ -28,3 +28,7 @@ b) **HOW TO GET THE ACTUAL SECRET VALUE** (in this case is `/vps/ci-cd/coolify/.
 - **CI/CD Handling**: Only refer to CI secret names and where to fetch values (the `.env` file); never paste values into YAML
 - **Git Rules**: `.env` files must be ignored and never committed; do not paste `.env` contents into issues/PRs
 - **Accidental Exposure**: If exposure occurs, rotate immediately, scrub the artifact, and update `.env` and CI stores
+
+# Miscellaneous
+
+- NEVER use special characters, emoji because it make you likely failed to edit file

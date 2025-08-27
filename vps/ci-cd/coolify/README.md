@@ -29,9 +29,7 @@ After installation:
 - **Docker Compose Reference**: https://docs.docker.com/compose/
 - **GitHub Issues**: https://github.com/coollabsio/coolify/issues
 
-# 🔌 API Integration and GitHub Actions
-
-## Coolify API Access Pattern
+# Coolify API Access Pattern
 
 **CRITICAL**: Always access Coolify using the Bearer token from the `.env` file
 
@@ -59,9 +57,59 @@ curl -s -H "Authorization: Bearer <GITHUBB_TIMOTHYNGUYEN_COOLIFY_GITHUB_ACTION_A
 - Check multiple endpoints to understand the current state
 - Applications must be created in Coolify before deployment will work
 
-# Connect GitHub Repo with Coolify GitHub Action CI/CD Proces
+# Connect GitHub Repo with Coolify CI/CD Process
 
-## GitHub Actions Secret Configuration
+This section documents how to connect a GitHub repository to Coolify using the **Private Repository (with GitHub App)** method and achieve automatic CI/CD deployment. **NOTES**: This method doesn't require to setup GitHub Action in the GitHub repository.
+
+### 🔧 Step-by-Step Setup Process
+
+#### 1. Install Coolify GitHub App
+
+**NOTES**: When you need to do this section, instead of you doing, instruct the user how to do it.
+
+**In Coolify Dashboard:**
+1. Navigate to **Sources** section
+2. Click **+ Add** → **GitHub** → **GitHub App**
+3. Click **Install GitHub App**
+
+**In GitHub (Redirected):**
+1. Choose **Install** on the Coolify GitHub App page
+2. Select repository access:
+   - **Recommended**: "Only select repositories"
+   - Choose your target repository (e.g., `tannguyencse19/demo-develop-app-with-tdd`)
+3. Click **Install & Authorize**
+4. You'll be redirected back to Coolify
+
+**Back in Coolify:**
+1. Verify the GitHub App source appears in your Sources list
+2. Source should show connected status with repository access
+
+#### 2. Create Application from Connected Repository
+
+**NOTES**: When you need to do this section, instead of you doing, instruct the user how to do it.
+
+**Application Creation:**
+1. Navigate to **Applications** → **+ New Application**
+2. **Source**: Select your installed GitHub App
+3. **Repository**: Choose your want to deploy repository
+4. **Branch**: Accept default `main`
+5. **Build Pack**: Accept auto-detected `Dockerfile`
+
+**Configuration Settings (Accept Defaults):**
+- **Base Directory**: Choose your code directory
+- **Port**: Choose your port
+
+#### 3. Create `Dockerfile` in the targeted GitHub Repository
+1. Understand the current state of the targeted GitHub Repository using `github` MCP Server
+2. After understanded, create `Dockerfile` so that Coolify can use that to build the image for the deployment 
+
+### 🔄 CI/CD Workflow
+
+- **Push to main branch** → Triggers new deployment
+- **GitHub App webhook** → Notifies Coolify of changes
+- **Deployment pipeline** → Build → Deploy → Health check
+
+# GitHub Actions Secret Configuration
 
 **ALL GitHub repository secrets MUST have prefix: `GITHUBB_TIMOTHYNGUYEN_`**
 - Format: `GITHUBB_TIMOTHYNGUYEN_[PURPOSE]`
