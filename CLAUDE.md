@@ -13,6 +13,14 @@ Always read the memory bank files before doing any task:
 - ALWAYS use `gpt-agent` MCP Server for planning. ALWAYS use model `gpt-5` when using `gpt-agent` MCP Server.
 - Once planning finish, show the full detail plan and wait for review, NO CODE YET.
 
+## Third Party Documentation
+
+- ALWAYS use `context7` MCP Server to search for documnetation
+- If `context7` not have enough documentation, by then using `web search`
+- When fixing/debugging something, if you try 2 times by yourself and still can't fix it
+   a) Perform some `context7` MCP Server search or Web Search.
+   b) Asking `gpt-agent`
+
 ## Security Guidelines for Documentation
 
 **CRITICAL**: NEVER WRITE DOWN SECRET VALUE INTO MARKDOWN FILE. ONLY WRITE DOWN:
