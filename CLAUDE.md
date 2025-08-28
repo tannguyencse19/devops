@@ -18,6 +18,7 @@ Always read the memory bank files before doing any task:
 
 - ALWAYS use `gpt-agent` MCP Server for planning. ALWAYS use model `gpt-5` when using `gpt-agent` MCP Server.
 - Once planning finish, show the full detail plan and WAIT FOR REVIEW, NEVER DO ANYTHING NEXT.
+- Once finish writing down the plan to `CLAUDE-activePlan.md`, WAIT FOR REVIEW, NEVER DO ANYTHING NEXT.
 
 ## Third Party Documentation
 
@@ -45,4 +46,5 @@ b) **HOW TO GET THE ACTUAL SECRET VALUE** (in this case is `/vps/ci-cd/coolify/.
 
 # Miscellaneous
 
-- NEVER use special characters, emoji when are responding.
+- NEVER use special characters, unicode characters when editing files.
+- All script file must in this format: `<UPPERCASE_NAME>.sh`

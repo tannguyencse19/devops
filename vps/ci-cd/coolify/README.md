@@ -217,10 +217,6 @@ This section documents how to set up Cloudflare Tunnels with Coolify to expose a
 2. Update the application domain
 3. **Save and redeploy**
 
-# Define Environment Variables in Application
-
-https://coolify.io/docs/knowledge-base/environment-variables
-
 # Limitation
 
 - Currently can't push to GitHub packages even use Deploy Keys or GitHub Apps
