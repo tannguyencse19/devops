@@ -39,12 +39,6 @@ Place related files as close as possible to where they're used:
 
 **ALWAYS REMEMBER**: When creating or organizing files, ask "What is this most closely related to?" and place it there.
 
-## Examples Applied
-- Coolify INSTALL.sh � should have UNINSTALL.sh counterpart
-- Docker setup � include Docker removal/cleanup
-- Database setup � include data/container cleanup
-- Configuration files � track and remove all created files
-
 ## Coolify Integration Reference
 
 **CRITICAL**: When working on tasks that involve Coolify (deployment, GitHub Actions with Coolify, API integration), 

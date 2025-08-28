@@ -124,8 +124,7 @@ CMD ["npm", "run", "preview", "--", "--host", "0.0.0.0", "--port", "4173"]
 
 ```Dockerfile
 # Placeholder, will override when build image in Coolify
-# Coolify doesn't support custom `--build-arg` option: https://coolify.io/docs/knowledge-base/docker/custom-commands
-# Leverage Coolify default `--build-arg`, check deployment log for more detail
+# Leverage Coolify default environment: https://coolify.io/docs/knowledge-base/environment-variables
 # Use `COOLIFY_FQDN` instead of `COOLIFY_URL` because `COOLIFY_URL` contain the https, which Vite don't accept 
 ARG COOLIFY_FQDN
 ENV VITE_ALLOWED_DOMAIN=${COOLIFY_FQDN}
@@ -180,9 +179,7 @@ This section documents how to set up Cloudflare Tunnels with Coolify to expose a
 
 **NOTES**: This whole process is done totally BY USER. Wait for them to finish, then you perform Coolify API check to verify if they have done the step correct.
 
-## Step-by-Step Setup Process
-
-### 1. Create Cloudflare Tunnel
+## 1. Create Cloudflare Tunnel
 
 **In Cloudflare Dashboard:**
 1. Navigate to **Cloudflare Zero Trust** → **Networks** → **Tunnels**
@@ -193,7 +190,7 @@ This section documents how to set up Cloudflare Tunnels with Coolify to expose a
 6. Configure **Public Hostname**
 7. Click **"Save Tunnel"**
 
-### 2. Deploy Cloudflared App on Coolify
+## 2. Deploy Cloudflared App on Coolify
 
 **In Coolify Dashboard (`https://coolify.timothynguyen.work`):**
 0. Go to a **Projects**
@@ -205,7 +202,7 @@ This section documents how to set up Cloudflare Tunnels with Coolify to expose a
    - **Value**: `<YOUR_TUNNEL_TOKEN_FROM_STEP_1>`
 5. **Deploy** the Cloudflared application
 
-### 3. Configure DNS Records Manually
+## 3. Configure DNS Records Manually
 
 **CRITICAL**: Coolify cannot auto-create DNS records. You must create them manually.
 
@@ -213,12 +210,16 @@ This section documents how to set up Cloudflare Tunnels with Coolify to expose a
 1. Go to the tunnel you just created
 2. Go to **Public hostnames** --> Click on **Add a public hostname** button
 
-### 4. Update Application Domains in Coolify
+## 4. Update Application Domains in Coolify
 
 **For each application (e.g., demo-develop-app-with-tdd):**
 1. Go to application's settings  
 2. Update the application domain
 3. **Save and redeploy**
+
+# Define Environment Variables in Application
+
+https://coolify.io/docs/knowledge-base/environment-variables
 
 # Limitation
 
