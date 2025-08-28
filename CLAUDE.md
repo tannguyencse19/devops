@@ -31,7 +31,7 @@ Always read the memory bank files before doing any task:
 ## Security Guidelines for Documentation
 
 **CRITICAL**: NEVER WRITE DOWN SECRET VALUE INTO MARKDOWN FILE. ONLY WRITE DOWN:
-a) **SECRET KEY NAME** (e.g., `COOLIFY_API_TOKEN`, `ADMIN_PASSWORD`)
+a) **SECRET KEY NAME** (e.g., `GITHUBB_TIMOTHYNGUYEN_COOLIFY_GITHUB_ACTION_API_TOKEN`, `ADMIN_PASSWORD`)
 b) **HOW TO GET THE ACTUAL SECRET VALUE** (in this case is `/vps/ci-cd/coolify/.env`)
 
 ### Secret Handling Rules

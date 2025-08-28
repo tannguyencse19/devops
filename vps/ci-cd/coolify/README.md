@@ -50,7 +50,7 @@ curl -s -H "Authorization: Bearer <GITHUBB_TIMOTHYNGUYEN_COOLIFY_GITHUB_ACTION_A
 
 **Authentication details**:
 - Base URL: `https://coolify.timothynguyen.work`
-- API Token: `<COOLIFY_API_TOKEN>` (get actual value from `/vps/ci-cd/coolify/.env`)
+- API Token: `<GITHUBB_TIMOTHYNGUYEN_COOLIFY_GITHUB_ACTION_API_TOKEN>` (get actual value from `/vps/ci-cd/coolify/.env`)
 - Admin credentials: `<ADMIN_USERNAME>` / `<ADMIN_PASSWORD>` (get actual values from `/vps/ci-cd/coolify/.env`)
 
 **Usage notes**:
