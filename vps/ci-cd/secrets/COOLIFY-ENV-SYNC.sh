@@ -75,10 +75,13 @@ load_secrets() {
     local secrets_count=0
     local has_required_var=false
     
-    # Process each line using command substitution to avoid while read issues
+    # Process each line - handle files without trailing newlines properly
+    local content
+    content=$(cat "$SECRETS_FILE")
+    [[ "${content: -1}" != $'\n' ]] && content+=$'\n'
+    
     local lines
-    # Add a newline to handle files without trailing newlines
-    { cat "$SECRETS_FILE"; echo; } | readarray -t lines
+    readarray -t lines <<< "$content"
     
     for line in "${lines[@]}"; do
         [[ -z "$line" ]] && continue
@@ -94,7 +97,7 @@ load_secrets() {
             if [[ -n "$key" && -n "$value" ]]; then
                 ENV_KEYS+=("$key")
                 ENV_VALUES+=("$value")
-                ((secrets_count++))
+                secrets_count=$((secrets_count + 1))
                 [[ "$key" == "VITE_SUPABASE_URL" ]] && has_required_var=true
             fi
         fi
@@ -196,7 +199,7 @@ sync_environment_variables() {
             
             if [[ "$http_code" == "200" || "$http_code" == "201" ]]; then
                 log "✓ Updated variable: $key (build_time=$is_build_time)"
-                ((success_count++))
+                success_count=$((success_count + 1))
             else
                 log "✗ Failed to update variable: $key (HTTP $http_code)"
                 log "Response body: $body"
