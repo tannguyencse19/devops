@@ -121,6 +121,52 @@ This section documents how to connect a GitHub repository to Coolify using the *
 
 **Secret values can be found in**: `/vps/ci-cd/coolify/.env`
 
+# Cloudflare Tunnel Integration with Coolify
+
+This section documents how to set up Cloudflare Tunnels with Coolify to expose applications through custom domains without opening server ports. 
+
+**NOTES**: This whole process is done totally BY USER. Wait for them to finish, then you perform Coolify API check to verify if they have done the step correct.
+
+## Step-by-Step Setup Process
+
+### 1. Create Cloudflare Tunnel
+
+**In Cloudflare Dashboard:**
+1. Navigate to **Cloudflare Zero Trust** → **Networks** → **Tunnels**
+2. Click **"Add a tunnel"**
+3. Select **"Cloudflared"** as tunnel type
+4. **Name**: Give tunnel a name (e.g., "coolify-tunnel")
+5. **Save the tunnel token** from the install command (long token starting with `eyJh...`)
+6. Configure **Public Hostname**
+7. Click **"Save Tunnel"**
+
+### 2. Deploy Cloudflared App on Coolify
+
+**In Coolify Dashboard (`https://coolify.timothynguyen.work`):**
+0. Go to a **Projects**
+1. Create new resource
+2. **Search**: "Cloudflared" and select it
+3. Navigate to **"Environment Variables"** section
+4. **Add environment variable**:
+   - **Name**: `TUNNEL_TOKEN`
+   - **Value**: `<YOUR_TUNNEL_TOKEN_FROM_STEP_1>`
+5. **Deploy** the Cloudflared application
+
+### 3. Configure DNS Records Manually
+
+**CRITICAL**: Coolify cannot auto-create DNS records. You must create them manually.
+
+**Go to Tunnels dashboard**
+1. Go to the tunnel you just created
+2. Go to **Public hostnames** --> Click on **Add a public hostname** button
+
+### 4. Update Application Domains in Coolify
+
+**For each application (e.g., demo-develop-app-with-tdd):**
+1. Go to application's settings  
+2. Update the application domain
+3. **Save and redeploy**
+
 # Limitation
 
 - Currently can't push to GitHub packages even use Deploy Keys or GitHub Apps
