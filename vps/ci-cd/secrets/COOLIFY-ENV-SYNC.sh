@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# ./vps/ci-cd/secrets/COOLIFY-ENV-SYNC.sh demo-develop-app-with-tdd
+
 set -euo pipefail
 
 APP_NAME="${1:-}"
@@ -75,7 +77,8 @@ load_secrets() {
     
     # Process each line using command substitution to avoid while read issues
     local lines
-    readarray -t lines < "$SECRETS_FILE"
+    # Add a newline to handle files without trailing newlines
+    { cat "$SECRETS_FILE"; echo; } | readarray -t lines
     
     for line in "${lines[@]}"; do
         [[ -z "$line" ]] && continue
@@ -85,8 +88,8 @@ load_secrets() {
             local key="${BASH_REMATCH[1]}"
             local value="${BASH_REMATCH[2]}"
             
-            key=$(echo "$key" | xargs)
-            value=$(echo "$value" | xargs)
+            key=$(echo "$key" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
+            value=$(echo "$value" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
             
             if [[ -n "$key" && -n "$value" ]]; then
                 ENV_KEYS+=("$key")

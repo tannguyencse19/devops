@@ -1,7 +1,7 @@
 # Coolify Environment Variables Automation Plan
 
 ## Goal
-Create an automated system to sync environment variables from `vps/ci-cd/secrets/demo-develop-app-with-tdd.env` to Coolify application "demo-develop-app-with-tdd" via API only.
+Create an automated system to sync environment variables from `vps/ci-cd/secrets/demo-develop-app-with-tdd.env` to Coolify application "demo-develop-app-with-tdd" via API and update the GitHub repository Dockerfile to use these variables during build.
 
 ## Target Application Details
 - **Coolify Application Name**: `demo-develop-app-with-tdd`
@@ -79,14 +79,32 @@ cd vps/ci-cd/secrets
    - Syncs all secrets from the file to Coolify
    - Reports completion status
 
-## Out of Scope
-- **GitHub repository modifications**: Dockerfile updates are handled separately
-- **Deployment triggers**: Script only updates environment variables
-- **Application management**: Only handles environment variable synchronization
+## Phase 1: Environment Variable Sync (COMPLETED ✅)
+- **File**: `vps/ci-cd/secrets/COOLIFY-ENV-SYNC.sh`
+- **Status**: Successfully implemented and tested
+- **Functionality**: Syncs environment variables from local `.env` files to Coolify via API
+
+## Phase 2: Dockerfile Update (CURRENT PHASE)
+- **Goal**: Update Dockerfile in GitHub repository to use environment variables during build
+- **Target File**: `Dockerfile` in `https://github.com/tannguyencse19/demo-develop-app-with-tdd`
+- **Key Requirements**:
+  - Add `ARG` declarations for `VITE_*` build-time variables
+  - Use multi-stage build with Node.js builder stage
+  - Expose `VITE_*` variables as `ENV` during build stage
+  - Copy built assets to minimal runtime image (e.g., nginx:alpine)
+  - Never hardcode secrets in Dockerfile
+  - Use GitHub API to make changes (no local cloning)
+
+## Phase 2 Implementation Steps
+1. **Discovery**: Analyze current Dockerfile via GitHub API
+2. **Environment Analysis**: Read `VITE_*` variables from `demo-develop-app-with-tdd.env`
+3. **Dockerfile Update**: Create multi-stage build with proper `ARG`/`ENV` handling
+4. **PR Creation**: Submit changes via GitHub API with detailed description
+5. **Validation**: Ensure build process works with Coolify build args
 
 ## Benefits
-- **One command operation** - no repeated manual steps
-- **Focused scope** - only handles Coolify environment variable sync
-- **Colocated with secrets** - script lives where secrets are managed
-- **Automatic discovery** - script finds application and handles all API calls
+- **End-to-end automation** - from local secrets to working deployment
+- **Security-first** - never exposes secrets in build artifacts
+- **Multi-stage builds** - minimal runtime images
+- **GitHub API integration** - no local repository cloning needed
 - **File convention** - uses APP_NAME.env pattern for easy management
