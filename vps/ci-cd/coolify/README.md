@@ -61,9 +61,9 @@ curl -s -H "Authorization: Bearer <GITHUBB_TIMOTHYNGUYEN_COOLIFY_GITHUB_ACTION_A
 
 This section documents how to connect a GitHub repository to Coolify using the **Private Repository (with GitHub App)** method and achieve automatic CI/CD deployment. **NOTES**: This method doesn't require to setup GitHub Action in the GitHub repository.
 
-### 🔧 Step-by-Step Setup Process
+**Setup Process**
 
-#### 1. Install Coolify GitHub App
+## 1. Install Coolify GitHub App
 
 **NOTES**: When you need to do this section, instead of you doing, instruct the user how to do it AND WAIT FOR THEM TO FINISH.
 
@@ -76,7 +76,7 @@ This section documents how to connect a GitHub repository to Coolify using the *
 1. Choose **Install** on the Coolify GitHub App page
 2. Select repository access:
    - **Recommended**: "Only select repositories"
-   - Choose your target repository (e.g., `tannguyencse19/demo-develop-app-with-tdd`)
+   - Choose your target repository
 3. Click **Install & Authorize**
 4. You'll be redirected back to Coolify
 
@@ -84,7 +84,7 @@ This section documents how to connect a GitHub repository to Coolify using the *
 1. Verify the GitHub App source appears in your Sources list
 2. Source should show connected status with repository access
 
-#### 2. Create Application from Connected Repository
+## 2. Create Application from Connected Repository
 
 **NOTES**: When you need to do this section, instead of you doing, instruct the user how to do it AND WAIT FOR THEM TO FINISH.
 
@@ -94,14 +94,67 @@ This section documents how to connect a GitHub repository to Coolify using the *
 3. **Repository**: Choose your want to deploy repository
 4. **Branch**: Accept default `main`
 5. **Build Pack**: Accept auto-detected `Dockerfile`
+6. **Port mapping**
+   - Port Mapping format: <YOUR_WANTING_PORT>:<DOCKER_FILE_EXPOSE_PORT>
+   - Port Expose: <YOUR_WANTING_PORT>
 
 **Configuration Settings (Accept Defaults):**
 - **Base Directory**: Choose your code directory
 - **Port**: Choose your port
 
-#### 3. Create `Dockerfile` in the targeted GitHub Repository
+## 3. Create `Dockerfile` in the targeted GitHub Repository
 1. Understand the current state of the targeted GitHub Repository using `github` MCP Server
 2. After understanded, create `Dockerfile` so that Coolify can use that to build the image for the deployment 
+
+**NOTES**: 
+
+- AVOID using `nginx` because when creating `Dockerfile` because it might complex thing
+- Specify notes for when working with specify system
+
+a) Working with Vite app
+  * The expose syntax in `Dockerfile` must be like this
+
+```
+EXPOSE 4173
+CMD ["npm", "run", "preview", "--", "--host", "0.0.0.0", "--port", "4173"]
+```
+
+  * To fix the error of Vite "Blocked request. This host ("<DOMAIN>") is not allowed"
+   + Specify this in `Dockerfile`
+
+```Dockerfile
+# Placeholder, will override when build image in Coolify
+# Coolify doesn't support custom `--build-arg` option: https://coolify.io/docs/knowledge-base/docker/custom-commands
+# Leverage Coolify default `--build-arg`, check deployment log for more detail
+# Use `COOLIFY_FQDN` instead of `COOLIFY_URL` because `COOLIFY_URL` contain the https, which Vite don't accept 
+ARG COOLIFY_FQDN
+ENV VITE_ALLOWED_DOMAIN=${COOLIFY_FQDN}
+```
+
+   + Update this in `vite.config.ts`
+
+```ts
+import { defineConfig, loadEnv } from 'vite'
+
+...
+
+export default defineConfig(({ mode }) => {
+   const env = loadEnv(mode, process.cwd(), '')
+
+   ...
+
+   return {
+      ...,
+      preview: {
+         ...(env.VITE_ALLOWED_DOMAIN ? { allowedHosts: [env.VITE_ALLOWED_DOMAIN] } : {}),
+      },
+      server: {
+         ...(env.VITE_ALLOWED_DOMAIN ? { allowedHosts: [env.VITE_ALLOWED_DOMAIN] } : {}),
+      },
+   }
+})
+```
+
 
 ### 🔄 CI/CD Workflow
 
