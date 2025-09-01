@@ -8,10 +8,12 @@ set -e
 echo "Restarting Cloudflare service..."
 
 # Stop the cloudflared service
+pkill cloudflared
 sudo systemctl stop cloudflared
 
 # Start the cloudflared service
 sudo systemctl start cloudflared
+cloudflared tunnel run
 
 # Check the service status
 echo "Checking service status..."
