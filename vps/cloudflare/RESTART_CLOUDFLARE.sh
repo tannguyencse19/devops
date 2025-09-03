@@ -13,7 +13,6 @@ sudo systemctl stop cloudflared
 
 # Start the cloudflared service
 sudo systemctl start cloudflared
-cloudflared tunnel run
 
 # Check the service status
 echo "Checking service status..."
