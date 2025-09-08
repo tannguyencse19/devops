@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-ROOT="/root/devops/cloudflare"
+ROOT="/root/.cloudflared"
 CONFIG_YML="${ROOT}/config.yml"
 SERVICE_NAME="cloudflare-tunnel-auto-restart"
 SERVICE_FILE="/etc/systemd/system/${SERVICE_NAME}.service"
