@@ -1,0 +1,32 @@
+[Unit]
+Description=code-server (Custom DevOps Setup)
+Documentation=https://github.com/coder/code-server
+After=network.target
+
+[Service]
+Type=exec
+User=root
+WorkingDirectory=/root/devops/vps/code-server
+ExecStart=/usr/bin/code-server --config /root/devops/vps/code-server/config/config.yaml
+ExecReload=/bin/kill -HUP $MAINPID
+Restart=on-failure
+RestartSec=5
+KillMode=mixed
+TimeoutStopSec=30
+
+# Security settings
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=yes
+ReadWritePaths=/root/devops/vps/code-server
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+
+# Environment
+Environment=USER=root
+Environment=HOME=/root
+
+[Install]
+WantedBy=multi-user.target
