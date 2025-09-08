@@ -32,7 +32,7 @@ fi
 echo "==> Setting up auto-restart service..."
 
 # Copy this script to the cloudflared directory
-cp "$0" "/root/devops/vps/cloudflare/auto_restart_tunnel.sh"
+cp "$0" "${ROOT}/auto_restart_tunnel.sh"
 
 # Create the systemd service file
 sudo tee "$SERVICE_FILE" > /dev/null << EOF
