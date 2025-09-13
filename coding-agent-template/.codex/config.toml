@@ -1,0 +1,19 @@
+model = "gpt-5"
+model_reasoning_effort = "medium"
+
+[mcp_servers.aws_api_mcp]
+command = "uvx"
+args = ["awslabs.aws-api-mcp-server@latest"]
+env = { AWS_REGION = "ap-southeast-1", AWS_API_MCP_PROFILE_NAME = "default" }
+startup_timeout_ms = 90000
+
+# [mcp_servers.context7]
+# command = "npx"
+# args = ["-y", "@upstash/context7-mcp", "--api-key", "ctx7sk-ad8a3d7f-8fc4-4839-b39b-5c5a22eb4e42"]
+
+[mcp_servers.aws_knowledge_mcp]
+command = "npx"
+args = ["mcp-remote", "https://knowledge-mcp.global.api.aws"]
+
+[projects."/root/CODE/text-to-sql"]
+trust_level = "trusted"

@@ -1,0 +1,2 @@
+- READ "CLAUDE.md"
+- Implement the fix, but run the command directly first, then after confirm the command work, by then fix the script. Don't fix the script and then run it to test if the command work

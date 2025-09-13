@@ -1,0 +1,3 @@
+- ALWAYS READ "CLAUDE.md"
+- Find the root cause of the issue.
+- Once finish, show the full root cause analysis and wait for review, NO CODE YET.
