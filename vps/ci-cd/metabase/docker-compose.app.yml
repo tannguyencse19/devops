@@ -1,0 +1,32 @@
+# Docker Compose for Metabase Application Deployment in Coolify
+# This separates the application (Metabase) from the database (PostgreSQL)
+
+services:
+  metabase:
+    image: metabase/metabase:latest
+    restart: unless-stopped
+    ports:
+      - "5700:3000"
+    environment:
+      MB_DB_TYPE: postgres
+      MB_DB_DBNAME: ${MB_DB_DBNAME}
+      MB_DB_PORT: 5710
+      MB_DB_USER: ${MB_DB_USER}
+      MB_DB_PASS: ${MB_DB_PASS}
+      MB_DB_HOST: ${MB_DB_HOST}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 300s
+    volumes:
+      - metabase-data:/plugins
+
+volumes:
+  metabase-data:
+    driver: local
+
+networks:
+  default:
+    name: metabase-app-network

@@ -1,60 +1,64 @@
-# Metabase on Coolify
+# Metabase on Coolify as Application
 
-This directory contains scripts and configurations for deploying Metabase to Coolify using Docker Compose.
+This directory contains scripts and configurations for deploying Metabase to Coolify as an Application with proper domain management and external PostgreSQL database.
 
 ## 📋 What's Included
 
-- **docker-compose.yml** - Metabase + PostgreSQL service definition for Coolify
+- **docker-compose.yml** - Original service-based configuration (legacy)
+- **docker-compose.app.yml** - Application-optimized configuration  
+- **Dockerfile** - Custom Metabase image for applications
 - **.example.env** - Environment variables template
-- **DEPLOY_TO_COOLIFY.sh** - Initial deployment script
+- **DEPLOY_APP_TO_COOLIFY.sh** - Application deployment script
+- **MANAGE_METABASE_COOLIFY.sh** - Comprehensive management script
+- **SETUP_AS_APPLICATION.md** - Manual setup guide
 - **UPDATE_PASSWORD.sh** - Password management script
-- **MANAGE_SERVICE.sh** - Service management script
 
-## 🚀 Quick Start
+## 🚀 Quick Start (Application Deployment)
 
-### 1. Deploy to Coolify
+### 1. Deploy PostgreSQL Database
 
 ```bash
 cd vps/ci-cd/metabase
-./DEPLOY_TO_COOLIFY.sh
+./DEPLOY_APP_TO_COOLIFY.sh
 ```
 
 This will:
-- Create a new Metabase service in Coolify
+- Create PostgreSQL service for Metabase
 - Set up default environment variables
-- Display the service UUID for management
+- Provide setup instructions for the application
 
-### 2. Update PostgreSQL Password
+### 2. Create Metabase Application (Manual)
 
-**CRITICAL:** Change the default password before first deployment:
-
-```bash
-./UPDATE_PASSWORD.sh
-```
-
-This will:
-- Prompt for a strong password
-- Update the POSTGRES_PASSWORD environment variable
-- Provide next steps for deployment
-
-### 3. Deploy the Service
+Since Coolify Applications require dashboard access:
 
 ```bash
-./MANAGE_SERVICE.sh deploy
+./MANAGE_METABASE_COOLIFY.sh setup-manual
 ```
 
-Or use the Coolify dashboard:
-1. Go to https://coolify.timothynguyen.work
-2. Navigate to PRODUCTION project > Services > metabase-service
-3. Click Deploy
+This provides step-by-step instructions to:
+- Create Metabase application in Coolify dashboard
+- Configure proper domain management
+- Set up port mappings (5700:3000)
+- Connect to PostgreSQL database
+
+### 3. Check Status
+
+```bash
+./MANAGE_METABASE_COOLIFY.sh full-status
+```
+
+This shows:
+- PostgreSQL service status
+- Port availability
+- Configuration summary
 
 ### 4. Access Metabase
 
-Once deployed, Metabase will be accessible through the automatically generated Coolify domain. Check the service status to get the URL:
+Once deployed via dashboard, Metabase will be accessible through:
+- Auto-generated Coolify domain (recommended)
+- Direct access: `http://SERVER_IP:5700`
 
-```bash
-./MANAGE_SERVICE.sh status
-```
+**Complete setup guide**: See `SETUP_AS_APPLICATION.md`
 
 ## 🔧 Service Management
 
