@@ -6,7 +6,7 @@ Always read the memory bank files before doing any task:
 
 - **CLAUDE-patterns.md** - Established code patterns and conventions
 - **CLAUDE-activePlan.md** - Current working plan, how many parts, which part has done
-- **CLAUDE-activeContext.md** - Current working part of the plan, current progress, goals
+- **CLAUDE-currentProgress.md** - Current session state, goals, and progress
 
 - NEVER read files in `archive` folder EXCEPT
   + Being explictly tell to do so
