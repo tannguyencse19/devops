@@ -5,7 +5,7 @@ ALWAYS read the memory bank files before doing any task:
 - **CLAUDE-patterns.md** - Established code patterns and conventions
 - **CLAUDE-activePlan.md** - Current working plan, how many parts, which part has done
 - **CLAUDE-currentProgress.md** - Current session state, goals, and progress
-- **docs/frequently-asked-questions** - Possible contain troubleshooting information 
+- **docs/frequently-asked-questions** - Contain troubleshooting information (only read if need, no need to read initially)
 
 - NEVER read files in `archive`, `docs` folder EXCEPT
     + Being explictly tell to do so
@@ -44,6 +44,7 @@ ALWAYS read the memory bank files before doing any task:
 - Although everything is inside a single script, but if you have code or other files, you can create separate files near the script file, and reference those files in the script file. By doing that, it is easier to maintain the script.
 - When fixing the script, run the command directly first, then after confirm the command work, by then fix the script. Don't fix the script and then run it to test if the command work because it takes longer time.
 - If you changed the script, you have to TEST it before claiming the current step has done.
+- ALWAYS echo message that MAKE DEBUGGING EASIER.
 
 ## Integration Philosophy
 

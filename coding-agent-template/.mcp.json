@@ -1,0 +1,27 @@
+{
+    "mcpServers": {
+      "gpt-agent": {
+        "type": "stdio",
+        "command": "codex",
+        "args": [
+          "mcp"
+        ],
+        "env": {}
+      },
+      "awslabs.aws-api-mcp-server": {
+        "type": "stdio",
+        "command": "uvx",
+        "args": [
+          "awslabs.aws-api-mcp-server@latest"
+        ],
+        "env": {
+          "AWS_REGION": "ap-southeast-1",
+          "AWS_API_MCP_PROFILE_NAME": "default"
+        }
+      },
+      "aws-knowledge-mcp-server": {
+        "type": "http",
+        "url": "https://knowledge-mcp.global.api.aws"
+      }
+    }
+}
