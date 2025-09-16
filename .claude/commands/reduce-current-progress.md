@@ -1,0 +1,3 @@
+- ALWAYS READ "CLAUDE.md"
+- The "CLAUDE-currentProgress.md" is too long now. Reduce to the latest progress only
+- NEVER use emoji, special characters, unicode characters when update the "CLAUDE-currentProgress.md".

@@ -1,0 +1,2 @@
+- Add to the end of your TODO: Remember to write every commands you run to finish the work inside a script so that I can reproduce your work in future.
+- After that, continue what you are doing

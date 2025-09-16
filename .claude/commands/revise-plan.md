@@ -1,0 +1,4 @@
+- ALWAYS READ "CLAUDE.md"
+- Perform your research to understand the user request by yourself first (read documentation, web search)
+- Once finish, update the plan in `CLAUDE-activePlan.md`, WAIT FOR REVIEW, NEVER DO ANYTHING NEXT.
+- NEVER use emoji, special characters, unicode characters when update the plan.

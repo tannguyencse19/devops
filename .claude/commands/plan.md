@@ -1,0 +1,4 @@
+- ALWAYS READ "CLAUDE.md"
+- Perform your research by yourself first (read documentation, web search)
+- Once finish, write down the plan to `CLAUDE-activePlan.md`, WAIT FOR REVIEW, NEVER DO ANYTHING NEXT.
+- NEVER use emoji, special characters, unicode characters when write the plan.

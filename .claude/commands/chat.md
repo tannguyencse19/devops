@@ -1,0 +1,5 @@
+- ALWAYS READ "CLAUDE.md"
+- NEVER modify anything.
+- Focus on verify if the user request is correct or wrong, NOT JUST agree with user blindly.
+- Check the actual files.
+- Check documentation if needed.

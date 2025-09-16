@@ -1,0 +1,2 @@
+- Add to the end of your TODO:
+- After that, continue what you are doing
