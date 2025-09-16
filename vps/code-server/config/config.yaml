@@ -1,5 +1,0 @@
-bind-addr: 127.0.0.1:8080
-auth: password
-password: e6c18e697e8fc5bc035e85e1
-cert: false
-user-data-dir: /root/devops/vps/code-server/data

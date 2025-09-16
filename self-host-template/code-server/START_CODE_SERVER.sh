@@ -6,7 +6,7 @@
 set -e
 
 # Define paths
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SCRIPT_DIR="/root"
 CONFIG_FILE="$SCRIPT_DIR/config/config.yaml"
 LOG_FILE="$SCRIPT_DIR/logs/code-server.log"
 PID_FILE="$SCRIPT_DIR/logs/code-server.pid"

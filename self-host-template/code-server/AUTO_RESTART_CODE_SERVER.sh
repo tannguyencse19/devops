@@ -7,7 +7,7 @@ After=network.target
 [Service]
 Type=simple
 User=$CURRENT_USER
-WorkingDirectory=$WORKING_DIR
+WorkingDirectory=/root/code-server
 ExecStart=$CODE_SERVER_PATH --bind-addr 0.0.0.0:8080 --user-data-dir $HOME/.local/share/code-server --extensions-dir $HOME/.local/share/code-server/extensions
 Restart=always
 RestartSec=10

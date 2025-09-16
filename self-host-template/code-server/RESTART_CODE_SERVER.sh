@@ -6,7 +6,7 @@
 set -e
 
 # Define paths
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SCRIPT_DIR="/root"
 START_SCRIPT="$SCRIPT_DIR/START_CODE_SERVER.sh"
 STOP_SCRIPT="$SCRIPT_DIR/STOP_CODE_SERVER.sh"
 

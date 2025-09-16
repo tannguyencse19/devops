@@ -6,7 +6,7 @@
 set -e
 
 # Define paths
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SCRIPT_DIR="/root"
 PID_FILE="$SCRIPT_DIR/logs/code-server.pid"
 
 # Check if PID file exists
