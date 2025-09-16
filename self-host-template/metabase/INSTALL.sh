@@ -18,8 +18,13 @@ if ! docker info &> /dev/null; then
     exit 1
 fi
 
-if ! command -v docker-compose &> /dev/null && ! command -v docker compose &> /dev/null; then
-    echo "❌ Docker Compose is not installed. Please install Docker Compose first."
+if ! command -v docker &> /dev/null; then
+    echo "❌ Docker with compose plugin is not installed. Please install Docker first."
+    exit 1
+fi
+
+if ! docker compose version &> /dev/null; then
+    echo "❌ Docker Compose plugin is not available. Please install Docker Compose plugin first."
     exit 1
 fi
 
@@ -58,14 +63,14 @@ echo "🔍 Checking current Docker setup..."
 # Stop and remove existing containers if they exist
 if docker ps -a --format "table {{.Names}}" | grep -E "metabase|metabase_postgres" &> /dev/null; then
     echo "🛑 Stopping and removing existing Metabase containers..."
-    docker-compose down --remove-orphans || docker compose down --remove-orphans || true
+    docker compose down --remove-orphans || true
 fi
 
 echo "📥 Pulling Docker images..."
-docker-compose pull || docker compose pull
+docker compose pull
 
 echo "🔧 Creating and starting services..."
-docker-compose up -d || docker compose up -d
+docker compose up -d
 
 echo "⏳ Waiting for services to be healthy..."
 
@@ -76,7 +81,7 @@ counter=0
 while ! docker exec metabase_postgres pg_isready -U metabase -d metabase &> /dev/null; do
     if [ $counter -ge $timeout ]; then
         echo "❌ Timeout waiting for PostgreSQL to be ready"
-        docker-compose logs postgres || docker compose logs postgres
+        docker compose logs postgres
         exit 1
     fi
     echo "   ... still waiting for PostgreSQL ($counter/$timeout seconds)"
@@ -93,7 +98,7 @@ counter=0
 while ! curl -f http://localhost:5700/api/health &> /dev/null; do
     if [ $counter -ge $timeout ]; then
         echo "❌ Timeout waiting for Metabase to be ready"
-        docker-compose logs metabase || docker compose logs metabase
+        docker compose logs metabase
         exit 1
     fi
     echo "   ... still waiting for Metabase ($counter/$timeout seconds)"

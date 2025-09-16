@@ -29,8 +29,8 @@ if [ "$confirmation" != "yes" ]; then
 fi
 
 echo "🛑 Stopping Metabase services..."
-if docker-compose ps -q &> /dev/null || docker compose ps -q &> /dev/null; then
-    docker-compose down --remove-orphans || docker compose down --remove-orphans || true
+if docker compose ps -q &> /dev/null; then
+    docker compose down --remove-orphans || true
 else
     echo "   No running services found"
 fi
@@ -63,13 +63,6 @@ echo "🖼️  Removing Docker images..."
 docker rmi metabase/metabase:latest 2>/dev/null || true
 docker rmi postgres:15-alpine 2>/dev/null || true
 
-echo "📁 Cleaning up local files..."
-# Remove .env file
-if [ -f .env ]; then
-    rm .env
-    echo "   ✅ Removed .env file"
-fi
-
 # Keep the template and scripts, only remove generated files
 echo "   ✅ Preserved template files and management scripts"
 
@@ -87,7 +80,6 @@ echo "   ✅ All Docker containers"
 echo "   ✅ All Docker volumes and data"
 echo "   ✅ Docker network"
 echo "   ✅ Docker images"
-echo "   ✅ .env configuration file"
 echo ""
 echo "📝 What was preserved:"
 echo "   ✅ Management scripts (INSTALL.sh, START.sh, STOP.sh)"

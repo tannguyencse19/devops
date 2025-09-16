@@ -14,17 +14,17 @@ cd "$SCRIPT_DIR"
 echo "📂 Working directory: $SCRIPT_DIR"
 
 # Check if services are running
-if ! docker-compose ps -q &> /dev/null && ! docker compose ps -q &> /dev/null; then
+if ! docker compose ps -q &> /dev/null; then
     echo "ℹ️  No services appear to be running."
     exit 0
 fi
 
 echo "📊 Current service status:"
-docker-compose ps || docker compose ps || true
+docker compose ps || true
 
 echo ""
 echo "⏳ Stopping services gracefully..."
-docker-compose stop || docker compose stop
+docker compose stop
 
 echo "✅ Services stopped successfully!"
 echo ""

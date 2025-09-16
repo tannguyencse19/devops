@@ -27,7 +27,7 @@ if ! docker info &> /dev/null; then
 fi
 
 echo "🔧 Starting Docker Compose services..."
-docker-compose up -d || docker compose up -d
+docker compose up -d
 
 echo "⏳ Waiting for services to start..."
 
@@ -39,7 +39,7 @@ while ! docker exec metabase_postgres pg_isready -U metabase -d metabase &> /dev
     if [ $counter -ge $timeout ]; then
         echo "❌ Timeout waiting for PostgreSQL to be ready"
         echo "📋 PostgreSQL logs:"
-        docker-compose logs --tail=20 postgres || docker compose logs --tail=20 postgres
+        docker compose logs --tail=20 postgres
         exit 1
     fi
     echo "   ... PostgreSQL starting ($counter/$timeout seconds)"
@@ -57,7 +57,7 @@ while ! curl -f http://localhost:5700/api/health &> /dev/null; do
     if [ $counter -ge $timeout ]; then
         echo "❌ Timeout waiting for Metabase to be ready"
         echo "📋 Metabase logs:"
-        docker-compose logs --tail=20 metabase || docker compose logs --tail=20 metabase
+        docker compose logs --tail=20 metabase
         exit 1
     fi
     echo "   ... Metabase starting ($counter/$timeout seconds)"
@@ -75,5 +75,5 @@ echo "   🌐 Metabase Web UI: http://localhost:5700"
 echo "   🗄️  PostgreSQL Database: localhost:5710"
 echo ""
 echo "📊 Service Status:"
-docker-compose ps || docker compose ps
+docker compose ps
 echo ""
