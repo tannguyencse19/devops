@@ -5,7 +5,7 @@ This directory contains scripts and configurations for deploying Metabase to Coo
 ## 📋 What's Included
 
 - **docker-compose.yml** - Metabase + PostgreSQL service definition for Coolify
-- **env.example** - Environment variables template
+- **.example.env** - Environment variables template
 - **DEPLOY_TO_COOLIFY.sh** - Initial deployment script
 - **UPDATE_PASSWORD.sh** - Password management script
 - **MANAGE_SERVICE.sh** - Service management script
@@ -88,13 +88,13 @@ Once deployed, Metabase will be accessible through the automatically generated C
 ## 🌐 Architecture
 
 ### Services
-- **Metabase** (port 3000): Business intelligence dashboard
-- **PostgreSQL** (port 5432): Database backend for Metabase
+- **Metabase** (port 5700): Business intelligence dashboard (maps to internal 3000)
+- **PostgreSQL** (port 5710): Database backend for Metabase (maps to internal 5432)
 
 ### Network
 - Internal Docker network for service communication
-- Coolify proxy handles external access
-- No external ports needed (all through Coolify proxy)
+- Coolify proxy handles external access on port 5700
+- PostgreSQL available for external connections on port 5710
 
 ### Data Persistence
 - PostgreSQL data: Docker volume `postgres-data`

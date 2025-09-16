@@ -8,7 +8,7 @@ set -e
 # Configuration
 COOLIFY_API_TOKEN="5|0IZMg4cQaIGgoBdeHN5x27idlmwFN0OQbA4XONAD84f15f59"
 COOLIFY_BASE_URL="https://coolify.timothynguyen.work"
-SERVICE_UUID="x0sw44kkggswgw80kgooo804"
+SERVICE_UUID="qwo48og08k80og40c8k8k8g4"
 
 echo "🔑 Updating PostgreSQL password for Metabase service..."
 

@@ -5,7 +5,7 @@
 - **INSTALL.sh** - Automated installation script
 - **UNINSTALL.sh** - Automated uninstallation script
 - **docker-compose.yml** - Coolify stack definition
-- **.env.example** - Environment configuration template
+- **.example.env** - Environment configuration template
 
 ## 📁 Directory Structure
 

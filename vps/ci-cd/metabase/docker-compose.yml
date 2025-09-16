@@ -3,7 +3,7 @@ services:
     image: metabase/metabase:latest
     restart: unless-stopped
     ports:
-      - "3000"
+      - "5700:3000"
     environment:
       MB_DB_TYPE: postgres
       MB_DB_DBNAME: ${POSTGRES_DATABASE}
@@ -11,6 +11,7 @@ services:
       MB_DB_USER: ${POSTGRES_USER}
       MB_DB_PASS: ${POSTGRES_PASSWORD}
       MB_DB_HOST: postgres
+      SERVICE_FQDN_METABASE_5700: /
     depends_on:
       postgres:
         condition: service_healthy
@@ -26,6 +27,8 @@ services:
   postgres:
     image: postgres:15-alpine
     restart: unless-stopped
+    ports:
+      - "5710:5432"
     environment:
       POSTGRES_DB: ${POSTGRES_DATABASE}
       POSTGRES_USER: ${POSTGRES_USER}
