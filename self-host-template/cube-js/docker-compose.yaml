@@ -7,7 +7,7 @@ services:
       - './conf:/cube/conf'
     environment:
       - CUBEJS_DEV_MODE=true
-      - CUBEJS_DB_HOST=localhost
+      - CUBEJS_DB_HOST=postgres
       - CUBEJS_DB_NAME=cube
       - CUBEJS_DB_PASS=YOO3hURqSXlHFEd0
       - CUBEJS_DB_PORT=5432
@@ -24,10 +24,8 @@ services:
       start_period: 60s
 
   postgres:
-    image: postgres:15-alpine
+    image: postgres:16-alpine
     restart: unless-stopped
-    ports:
-      - '5432:5432'
     environment:
       - POSTGRES_DB=cube
       - POSTGRES_USER=postgres
