@@ -14,3 +14,6 @@
 **CRITICAL**: When working on tasks that involve Coolify (deployment, GitHub Actions with Coolify, API integration), 
 **ALWAYS read `/root/CODE/TIMOTHY/devops/vps/ci-cd/coolify/README.md` first** before starting the task.
 
+# Others
+
+- ALWAYS use `docker compose` (v2) instead of `docker-compose` (v1)

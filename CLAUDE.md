@@ -6,7 +6,7 @@ Always read the memory bank files before doing any task:
 
 - **CLAUDE-patterns.md** - Established code patterns and conventions
 - **CLAUDE-activePlan.md** - Current working plan, how many parts, which part has done
-- **CLAUDE-activeContext.md** - Current working part of the plan, current progress, goals
+- **CLAUDE-currentProgress.md** - Current session state, goals, and progress
 
 - NEVER read files in `archive` folder EXCEPT
   + Being explictly tell to do so
@@ -74,6 +74,5 @@ b) **HOW TO GET THE ACTUAL SECRET VALUE**
 - If you have anything concern, tell me EXPLICITLY so that I can make decision.
 - If timeout happened, let me know so that I can make decision what to deal with that
 - Use the environment variable in `scripts/STEP_1_SET_ENVIRONMENT.sh`
-- If you create new resource, use CHEAPEAST OPTION FOR MINIMAL COST. BUT DO NOT CHANGE THE RESOURCE DEFINED IN THE ARCHITECTURE INTO SOMETHING DIFFERENT BUT CHEAPER. If you have trouble making this decision, STOP and let me know.
 - All database timestamps must be stored in UTC+0 timezone only - applications handle timezone conversion, never the database.
 - If you having timeout while doing something, but the next thing you intend to do depend on this timeout thing, STOP and let me know.

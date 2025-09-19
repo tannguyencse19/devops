@@ -1,4 +1,4 @@
 - ALWAYS READ "CLAUDE.md"
 - Find the root cause of the issue.
-- Asking GPT Agent, documentation search, web search if need.
+- Documentation search, web search if need.
 - Once finish, show the full root cause analysis and wait for review, NO CODE YET.
