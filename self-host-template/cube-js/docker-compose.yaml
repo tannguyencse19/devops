@@ -1,13 +1,46 @@
 services:
   cube:
     image: cubejs/cube
-    network_mode: host
-    # ports:
-    #   - '5800:4000'
-    #   - '5810:15432'
+    ports:
+      - '4000:4000'
     volumes:
       - './conf:/cube/conf'
-    env_file:
-      - .env
     environment:
       - CUBEJS_DEV_MODE=true
+      - CUBEJS_DB_HOST=localhost
+      - CUBEJS_DB_NAME=cube
+      - CUBEJS_DB_PASS=YOO3hURqSXlHFEd0
+      - CUBEJS_DB_PORT=5432
+      - CUBEJS_DB_TYPE=postgres
+      - CUBEJS_DB_USER=postgres
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4000/readyz"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+  postgres:
+    image: postgres:15-alpine
+    restart: unless-stopped
+    ports:
+      - '5432:5432'
+    environment:
+      - POSTGRES_DB=cube
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=YOO3hURqSXlHFEd0
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d cube"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+volumes:
+  postgres-data:
+    driver: local
