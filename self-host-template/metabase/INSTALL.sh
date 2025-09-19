@@ -1,129 +1,95 @@
 #!/bin/bash
 
-# Metabase Self-Host Installation Script
-# This script sets up Metabase with PostgreSQL using Docker Compose
+# INSTALL.sh - Deploy Metabase to Coolify APPLICATION
+# This script provides instructions and API verification for Coolify deployment
 
 set -e
 
-echo "🚀 Starting Metabase Self-Host Installation..."
-
-# Check if Docker is installed and running
-if ! command -v docker &> /dev/null; then
-    echo "❌ Docker is not installed. Please install Docker first."
-    exit 1
-fi
-
-if ! docker info &> /dev/null; then
-    echo "❌ Docker is not running. Please start Docker first."
-    exit 1
-fi
-
-if ! command -v docker &> /dev/null; then
-    echo "❌ Docker with compose plugin is not installed. Please install Docker first."
-    exit 1
-fi
-
-if ! docker compose version &> /dev/null; then
-    echo "❌ Docker Compose plugin is not available. Please install Docker Compose plugin first."
-    exit 1
-fi
-
-# Set the working directory to the script location
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-cd "$SCRIPT_DIR"
+COOLIFY_ENV_FILE="/root/CODE/TIMOTHY/devops/vps/ci-cd/coolify/.env"
 
-echo "📂 Working directory: $SCRIPT_DIR"
+echo "=============================================="
+echo "Metabase Coolify Application Deployment"
+echo "=============================================="
 
-# Check if .env file exists, if not copy from template
-if [ ! -f .env ]; then
-    echo "📝 Creating .env file from template..."
-    if [ -f .example.env ]; then
-        cp .example.env .env
-        echo "✅ Created .env file from .example.env"
-        echo "⚠️  Please edit .env file and update the POSTGRES_PASSWORD before continuing."
-        echo "⚠️  Current password is set to placeholder: <STRONG_PASSWORD_HERE>"
-        echo ""
-        read -p "Press Enter after you have updated the .env file..."
-    else
-        echo "❌ .example.env file not found!"
-        exit 1
-    fi
+# Source Coolify environment variables
+if [[ -f "$COOLIFY_ENV_FILE" ]]; then
+    echo "Loading Coolify environment variables..."
+    source "$COOLIFY_ENV_FILE"
 else
-    echo "✅ .env file already exists"
-fi
-
-# Check if password is still placeholder
-if grep -q "<STRONG_PASSWORD_HERE>" .env; then
-    echo "❌ Please update the POSTGRES_PASSWORD in .env file. It's still set to placeholder."
+    echo "ERROR: Coolify environment file not found at $COOLIFY_ENV_FILE"
+    echo "Please ensure Coolify is installed and configured."
     exit 1
 fi
 
-echo "🔍 Checking current Docker setup..."
-
-# Stop and remove existing containers if they exist
-if docker ps -a --format "table {{.Names}}" | grep -E "metabase|metabase_postgres" &> /dev/null; then
-    echo "🛑 Stopping and removing existing Metabase containers..."
-    docker compose down --remove-orphans || true
+# Check if required variables are set
+if [[ -z "$GITHUBB_TIMOTHYNGUYEN_COOLIFY_GITHUB_ACTION_API_TOKEN" ]]; then
+    echo "ERROR: GITHUBB_TIMOTHYNGUYEN_COOLIFY_GITHUB_ACTION_API_TOKEN not found in environment"
+    exit 1
 fi
 
-echo "📥 Pulling Docker images..."
-docker compose pull
-
-echo "🔧 Creating and starting services..."
-docker compose up -d
-
-echo "⏳ Waiting for services to be healthy..."
-
-# Wait for PostgreSQL to be ready
-echo "🗄️  Waiting for PostgreSQL to be ready..."
-timeout=300
-counter=0
-while ! docker exec metabase_postgres pg_isready -U metabase -d metabase &> /dev/null; do
-    if [ $counter -ge $timeout ]; then
-        echo "❌ Timeout waiting for PostgreSQL to be ready"
-        docker compose logs postgres
-        exit 1
-    fi
-    echo "   ... still waiting for PostgreSQL ($counter/$timeout seconds)"
-    sleep 5
-    counter=$((counter + 5))
-done
-
-echo "✅ PostgreSQL is ready!"
-
-# Wait for Metabase to be ready
-echo "📊 Waiting for Metabase to be ready..."
-timeout=600
-counter=0
-while ! curl -f http://localhost:5700/api/health &> /dev/null; do
-    if [ $counter -ge $timeout ]; then
-        echo "❌ Timeout waiting for Metabase to be ready"
-        docker compose logs metabase
-        exit 1
-    fi
-    echo "   ... still waiting for Metabase ($counter/$timeout seconds)"
-    sleep 10
-    counter=$((counter + 10))
-done
-
-echo "✅ Metabase is ready!"
+COOLIFY_URL="https://coolify.timothynguyen.work"
+API_TOKEN="$GITHUBB_TIMOTHYNGUYEN_COOLIFY_GITHUB_ACTION_API_TOKEN"
 
 echo ""
-echo "🎉 Metabase Self-Host Installation Complete!"
+echo "Step 1: Checking Coolify API connection..."
+echo "----------------------------------------"
+
+# Test API connection
+response=$(curl -s -H "Authorization: Bearer $API_TOKEN" \
+    -H "Accept: application/json" \
+    "$COOLIFY_URL/api/v1/applications" || echo "FAILED")
+
+if [[ "$response" == "FAILED" ]]; then
+    echo "ERROR: Failed to connect to Coolify API"
+    echo "Please check your network connection and API token"
+    exit 1
+else
+    echo "SUCCESS: Connected to Coolify API"
+fi
+
 echo ""
-echo "📋 Access Information:"
-echo "   🌐 Metabase Web UI: http://localhost:5700"
-echo "   🗄️  PostgreSQL Database: localhost:5710"
-echo "   👤 Database User: metabase"
-echo "   🔗 Database Name: metabase"
+echo "Step 2: Checking current applications..."
+echo "---------------------------------------"
+
+# List current applications to see if metabase already exists
+echo "Current applications in Coolify:"
+echo "$response" | jq -r '.data[]? | "- \(.name) (ID: \(.id))"' 2>/dev/null || echo "No applications found or jq not available"
+
 echo ""
-echo "📖 Management Commands:"
-echo "   ./START.sh    - Start services"
-echo "   ./STOP.sh     - Stop services"
-echo "   ./UNINSTALL.sh - Complete cleanup"
+echo "Step 3: Manual APPLICATION Creation Required"
+echo "===========================================" 
 echo ""
-echo "🔐 First-time Setup:"
-echo "   1. Open http://localhost:5700 in your browser"
-echo "   2. Complete the Metabase initial setup wizard"
-echo "   3. The database connection is already configured"
+echo "Due to Coolify's architecture, you need to create the APPLICATION manually in the Coolify UI."
+echo "Please follow these steps:"
 echo ""
+echo "1. Open Coolify Dashboard: $COOLIFY_URL"
+echo "   - Username: $ROOT_USERNAME"
+echo "   - Password: <check $COOLIFY_ENV_FILE for ROOT_USER_PASSWORD>"
+echo ""
+echo "2. Navigate to your Project and click 'Create New Resource'"
+echo ""
+echo "3. Select 'Applications' -> 'Docker Compose Empty'"
+echo ""
+echo "4. Configure the application:"
+echo "   - Name: metabase"
+echo "   - Description: Metabase Analytics Platform"
+echo ""
+echo "5. Copy the docker-compose.yml content:"
+echo "   - Source file: $SCRIPT_DIR/docker-compose.yml"
+echo "   - Paste the content into Coolify's Docker Compose editor"
+echo ""
+echo "6. Set Environment Variables (if needed):"
+echo "   - POSTGRES_DATABASE=metabase"
+echo "   - POSTGRES_USER=metabase"
+echo "   - Note: SERVICE_PASSWORD_POSTGRES will be auto-generated"
+echo ""
+echo "7. Deploy the application by clicking 'Deploy'"
+echo ""
+echo "8. Monitor deployment progress in Coolify dashboard"
+echo ""
+echo "After manual setup, run VERIFY.sh to check deployment status."
+echo ""
+echo "=============================================="
+echo "Installation guide completed"
+echo "=============================================="

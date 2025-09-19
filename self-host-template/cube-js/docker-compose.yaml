@@ -1,0 +1,13 @@
+services:
+  cube:
+    image: cubejs/cube
+    network_mode: host
+    # ports:
+    #   - '5800:4000'
+    #   - '5810:15432'
+    volumes:
+      - './conf:/cube/conf'
+    env_file:
+      - .env
+    environment:
+      - CUBEJS_DEV_MODE=true
