@@ -1,6 +1,6 @@
 # Process
 
-- Step 1: Receive requirements <TODO: Insert Anirban document>
+- Step 1: Receive requirements from someone like Anirban or from the client directly <TODO: Insert Anirban document>
 - Step 2: Create a proposal - High-level Architecture Components, example flow; Low-level Architecture Components; Cost; Man-time estimations; Require information provide
 - Step 3: Review proposal
 
