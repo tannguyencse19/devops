@@ -1,0 +1,1 @@
+- ALWAYS READ "CLAUDE.md"
