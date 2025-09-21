@@ -1,30 +1,21 @@
 # Memory Bank System
 
-ALWAYS read the memory bank files before doing any task: 
+Always read the memory bank files before doing any task: 
 
 - **CLAUDE-patterns.md** - Established code patterns and conventions
 - **CLAUDE-activePlan.md** - Current working plan, how many parts, which part has done
 - **CLAUDE-currentProgress.md** - Current session state, goals, and progress
+- **frontend/README.md** - If your working might involve frontend, read this file.
+- **backend/README.md** - If your working might involve backend, read this file.
 - **docs/frequently-asked-questions** - Contain troubleshooting information (only read if need, no need to read initially)
 
 - NEVER read files in `archive`, `docs` folder EXCEPT
     + Being explictly tell to do so
     + Except for `docs/frequently-asked-questions`
-
-# GPT Agent MCP Server
-
-- ALWAYS use model `gpt-5`.
-
-# Simplicity First
-
-- When planning, aim for the simplest viable slice, not a full-fledged feature. Define a minimal, testable scope to ship quickly and iterate.
-- NEVER plan alternative approach.
-- **Do simple things instead of complicated design** - user will review work anyway
-- Avoid over-engineering or premature optimization
-
+    
 # Third Party Documentation
 
-- ALWAYS use `aws-knowledge-mcp-server` MCP Server to search for AWS documnetation
+- ALWAYS use `context7` MCP Server to search for documnetation
 - If not have enough documentation, then using `web search`
 
 # Development Principles
@@ -73,7 +64,6 @@ b) **HOW TO GET THE ACTUAL SECRET VALUE**
 - If detect a port is occupied, stop any existing processes on that port, then try again. NEVER change the specified port.
 - NEVER shorten environment variable names in code - always use the full original name to avoid misleading error messages.
 - If you have anything concern, tell me EXPLICITLY so that I can make decision.
-- Use the environment variable in `scripts/STEP_1_SET_ENVIRONMENT.sh`
 - If you create new resource, use CHEAPEAST OPTION FOR MINIMAL COST. BUT DO NOT CHANGE THE RESOURCE DEFINED IN THE ARCHITECTURE INTO SOMETHING DIFFERENT BUT CHEAPER. If you have trouble making this decision, STOP and let me know.
 - All database timestamps must be stored in UTC+0 timezone only - applications handle timezone conversion, never the database.
 - If you having timeout while doing something, but the next thing you intend to do depend on this timeout thing, STOP and let me know.
