@@ -8,7 +8,6 @@
 - **Framework**: Vitest with React Testing Library
 - **Commands**:
   - `npx vitest run src/components/auth` - Test specific directory
-  - `npm run test:dev-watch` - Watch mode for TDD
   - `npm run test:whole-app` - Test the whole app
 - **Environment Setup**: Mock environment variables in `vitest-setup-file.ts` for integration tests
 
