@@ -1,6 +1,7 @@
 {
     "env": {
-      "MCP_TIMEOUT": "90000"
+      "MCP_TIMEOUT": "90000",
+      "CLAUDE_CODE_MAX_OUTPUT_TOKENS": "50000" // https://www.reddit.com/r/ClaudeAI/comments/1lsmsbr/claude_code_max_output_tokens_yes_or_no/
     },
     "enableAllProjectMcpServers": true
 }
