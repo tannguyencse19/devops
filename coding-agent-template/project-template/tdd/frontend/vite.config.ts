@@ -1,14 +1,20 @@
-import { defineConfig } from 'vite'
+import { defineConfig, loadEnv } from 'vite'
 
 // https://vite.dev/config/
-export default defineConfig({
-  server: {
-    host: true, // Allow external connections (0.0.0.0)
-    allowedHosts: process.env.VITE_ALLOWED_DOMAIN ? process.env.VITE_ALLOWED_DOMAIN.split(',') : ['localhost']
-  },
-  preview: {
-    host: true, // Allow external connections (0.0.0.0) 
-    port: 4173,
-    allowedHosts: process.env.VITE_ALLOWED_DOMAIN ? process.env.VITE_ALLOWED_DOMAIN.split(',') : ['localhost']
+export default defineConfig(({ mode }) => {
+
+  // https://vitejs.dev/config/#using-environment-variables-in-config
+  const processEnv = loadEnv(mode, process.cwd(), '')
+
+  return {
+    server: {
+      host: true, // Allow external connections (0.0.0.0)
+      allowedHosts: processEnv.VITE_ALLOWED_DOMAIN ? processEnv.VITE_ALLOWED_DOMAIN.split(',') : ['localhost']
+    },
+    preview: {
+      host: true, // Allow external connections (0.0.0.0) 
+      port: 4173,
+      allowedHosts: processEnv.VITE_ALLOWED_DOMAIN ? processEnv.VITE_ALLOWED_DOMAIN.split(',') : ['localhost']
+    }
   }
 })

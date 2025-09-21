@@ -20,6 +20,14 @@ Always read the memory bank files before doing any task:
 
 # Development Principles
 
+## Test-Driven Development
+
+- Always write tests before writing code
+
+## Library First
+
+- ALWAYS use existing libraries (i.e: Search in npm, github...) instead of self-implementing functionality
+
 ## COLOCATION Principle
 
 **CRITICAL**: Follow COLOCATION principle - keep related files as close together as possible.
