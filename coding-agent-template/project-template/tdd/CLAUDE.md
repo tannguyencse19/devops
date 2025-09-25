@@ -28,6 +28,10 @@ Always read the memory bank files before doing any task:
 
 - ALWAYS use existing libraries (i.e: Search in npm, github...) instead of self-implementing functionality
 
+## Error Handling
+
+- NEVER omit the error or re-throw a friendly error. Logging out the pure error to support the debugging.
+
 ## COLOCATION Principle
 
 **CRITICAL**: Follow COLOCATION principle - keep related files as close together as possible.
@@ -75,3 +79,4 @@ b) **HOW TO GET THE ACTUAL SECRET VALUE**
 - If you create new resource, use CHEAPEAST OPTION FOR MINIMAL COST. BUT DO NOT CHANGE THE RESOURCE DEFINED IN THE ARCHITECTURE INTO SOMETHING DIFFERENT BUT CHEAPER. If you have trouble making this decision, STOP and let me know.
 - All database timestamps must be stored in UTC+0 timezone only - applications handle timezone conversion, never the database.
 - If you having timeout while doing something, but the next thing you intend to do depend on this timeout thing, STOP and let me know.
+- When you run `npm run dev`, run it in the background

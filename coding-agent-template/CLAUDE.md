@@ -37,6 +37,10 @@ ALWAYS read the memory bank files before doing any task:
 - **Group by feature**: If files belong to the same feature, put them in the same directory
 - If two features need to use a same logic, put that logic in a folder called `shared/`, located to the nearest common parent of both logic.
 
+## Error Handling
+
+- NEVER omit the error or re-throw a friendly error. Logging out the pure error to support the debugging.
+
 ## Write Shell Script Principle
 
 - All script file must in this naming convention: `<UPPERCASE_SNAKE_CASE_NAME>.sh`.
