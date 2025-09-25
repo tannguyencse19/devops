@@ -62,7 +62,12 @@ services:
     env_file:
       - ${PROJECT_DIR}/.env
     volumes:
-      - ${PROJECT_DIR}/config.yaml:/app/config.yaml:ro
+      - type: bind
+        source: ${PROJECT_DIR}/config.yaml
+        target: /app/config.yaml
+        read_only: true
+        bind:
+          create_host_path: false
       - ${PROJECT_DIR}/data:/app/data:ro
     networks:
       - wren
