@@ -94,7 +94,7 @@ This section documents how to connect a GitHub repository to Coolify using the *
 3. **Repository**: Choose your want to deploy repository
 4. **Branch**: Accept default `main`
 5. **Build Pack**: Accept auto-detected `Dockerfile`
-6. **Port mapping**
+6. **Port mapping**: Require both even if a sample port number
    - Port Mapping format: <YOUR_WANTING_PORT>:<DOCKER_FILE_EXPOSE_PORT>
    - Port Expose: <YOUR_WANTING_PORT>
 
