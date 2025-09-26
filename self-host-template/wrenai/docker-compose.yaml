@@ -2,12 +2,29 @@ version: "3"
 
 volumes:
   data:
+  postgres_data:
 
 networks:
   wren:
     driver: bridge
 
 services:
+  postgres:
+    build: ./scripts/postgres # ONLY RUN FIRST TIME ONLY. If something goes wrong, have to delete the volumn and redeploy again
+    restart: on-failure
+    expose:
+      - "5432"
+    ports:
+      - ${POSTGRES_HOST_PORT:-5432}:5432
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-wren}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-wrenpass}
+      POSTGRES_DB: ${POSTGRES_DB:-wren}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - wren
+
   bootstrap:
     image: ghcr.io/canner/wren-bootstrap:${WREN_BOOTSTRAP_VERSION}
     restart: on-failure
@@ -72,6 +89,7 @@ services:
     networks:
       - wren
     depends_on:
+      - postgres
       - qdrant
 
   qdrant:
